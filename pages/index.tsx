@@ -6,7 +6,7 @@ const PageIndex: React.FC<NoChild> = () => {
   return (
     <>
       <h1>コンピュータグラフィクス論(2020) 課題</h1>
-      <Link href="/r2"><a>第2回(M1)</a></Link>
+      <Link href='/r2'>第2回(M1)</Link>
     </>
   )
 }

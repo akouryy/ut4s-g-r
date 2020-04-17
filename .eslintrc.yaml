@@ -1,0 +1,45 @@
+extends:
+  - eslint:recommended
+  - airbnb
+  - plugin:@typescript-eslint/eslint-recommended
+  - standard-with-typescript
+  - standard-react
+ignorePatterns:
+  - /next-env.d.ts
+overrides:
+  - files:
+      - '*.ts'
+      - '*.tsx'
+    excludedFiles: pages/*
+    rules:
+      import/no-default-export: error
+parserOptions:
+  project: ./tsconfig.json
+plugins:
+  - react-hooks
+root: true
+rules:
+  arrow-body-style: off
+  curly: [error, all]
+  no-var: error
+
+  import/extensions:
+    - error
+    - ts: never
+      tsx: never
+  import/prefer-default-export: off
+
+  react/jsx-closing-tag-location: off
+  react/jsx-filename-extension: off
+  react/prop-types: off
+  react-hooks/rules-of-hooks: error
+  react-hooks/exhaustive-deps: error
+
+  '@typescript-eslint/space-before-function-paren': [error, never]
+  '@typescript-eslint/strict-boolean-expressions': off
+settings:
+  import/resolver:
+    node:
+      extensions: [.js, .jsx, .ts, .tsx]
+  react:
+    version: detect

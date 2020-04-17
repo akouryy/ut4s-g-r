@@ -1,3 +1,3 @@
-import React from 'react'
-
-export type NoChild = { children?: never }
+export interface NoChild {
+  children?: never
+}
