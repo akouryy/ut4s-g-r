@@ -8,7 +8,7 @@ export const R2Side: React.FC<NoChild> = () => {
   return (
     <Tabs className='R2Side'>
       <TabList>
-        <Tab>編集</Tab>
+        <Tab>設定</Tab>
         <Tab>操作方法</Tab>
       </TabList>
 
@@ -17,7 +17,18 @@ export const R2Side: React.FC<NoChild> = () => {
       </TabPanel>
       <TabPanel>
         <section>
-          <h2>操作方法</h2>
+          <h2>操作方法(キャンバス)</h2>
+          <h3>点</h3>
+          <ul>
+            <li>
+              ⌥ Alt + クリック: xz平面上に点を
+              <b>追加</b>
+            </li>
+            <li>
+              ⇧ Shift + クリック: 最も近い点を
+              <b>削除</b>
+            </li>
+          </ul>
           <h3>カメラ</h3>
           <ul>
             <li>左クリック + ドラッグ: 回転</li>

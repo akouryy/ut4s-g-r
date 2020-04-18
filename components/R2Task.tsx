@@ -10,19 +10,20 @@ export const R2Task: React.FC<NoChild> = () => {
 
   const pointVertices = points.map(({ x, y, z }) => new Vector3(x, y, z))
   const lineVertices = React.useMemo(
-    () => calcVertices(points, algo).map((arr) => new Vector3(...arr)),
+    () => calcVertices(points, algo).map((arr) => arr.toVector3()),
     [algo, points],
   )
 
   return (
-    <group
-      key={points.toString() /* https://github.com/react-spring/react-three-fiber/issues/266 */}
-    >
-      <points>
+    <group>
+      <points
+        /* https://github.com/react-spring/react-three-fiber/issues/266 */
+        key={`points${pointVertices.toString()}`}
+      >
         <geometry attach='geometry' onUpdate={forceGeometryUpdate} vertices={pointVertices} />
-        <pointsMaterial attach='material' color={0xff3300} size={0.5} />
+        <pointsMaterial attach='material' color={0xff3300} size={0.25} />
       </points>
-      <line>
+      <line key={lineVertices.toString()}>
         <geometry attach='geometry' onUpdate={forceGeometryUpdate} vertices={lineVertices} />
         <lineBasicMaterial attach='material' color={0x0033ff} />
       </line>

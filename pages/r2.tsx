@@ -11,8 +11,8 @@ const PageR2: React.FC<NoChild> = () => {
       <Head>
         <link rel='shortcut icon' href='/favicon.svg' />
       </Head>
-      <h1>コンピュータグラフィクス論(2020) 課題</h1>
-      <h2>第2回(M1)</h2>
+      <h1 className='R2Page-Title'>コンピュータグラフィクス論(2020) 課題</h1>
+      <h2 className='R2Page-SubTitle'>第2回(M1)</h2>
       <R2Main />
     </BasePage>
   )

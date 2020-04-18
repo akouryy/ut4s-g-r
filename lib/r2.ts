@@ -1,10 +1,8 @@
-import { range } from 'lodash'
+import * as R from 'ramda'
 import { R2Algo, R2Point } from './r2Base'
 import { mult, plus } from './fn'
 
-type vec3 = [number, number, number]
-
-export function calcVertices(points: R2Point[], algo: R2Algo): vec3[] {
+export function calcVertices(points: R2Point[], algo: R2Algo): R2Point[] {
   switch (algo.kind) {
     case 'Bezier': return calcBezier(points, algo.deCasteljau)
     default: return []
@@ -13,7 +11,7 @@ export function calcVertices(points: R2Point[], algo: R2Algo): vec3[] {
 
 const NVertices = 100
 
-function calcBezier(points: R2Point[], deCasteljau: boolean): vec3[] {
+function calcBezier(points: R2Point[], deCasteljau: boolean): R2Point[] {
   const n = points.length - 1
 
   if (n < 2) {
@@ -21,10 +19,22 @@ function calcBezier(points: R2Point[], deCasteljau: boolean): vec3[] {
   }
 
   if (deCasteljau) {
-    return []
+    return R.range(0, NVertices + 1).map((tBase) => {
+      const t = tBase / NVertices
+
+      let step = points
+      R.range(0, n).forEach(() => {
+        step = R.aperture(2, step).map(([a, b]) => {
+          return new R2Point(...Array<'x'|'y'|'z'>('x', 'y', 'z').map((prop) => {
+            return a[prop] * (1 - t) + b[prop] * t
+          }) as [number, number, number])
+        })
+      })
+      return step[0]
+    })
   }
 
-  return range(NVertices + 1).map((tBase) => {
+  return R.range(0, NVertices + 1).map((tBase) => {
     const t = tBase / NVertices
     const f = (prop: 'x' | 'y' | 'z'): number => {
       let normalizer = 0
@@ -34,13 +44,13 @@ function calcBezier(points: R2Point[], deCasteljau: boolean): vec3[] {
         return xi * pt[prop]
       }).reduce(plus) / normalizer
     }
-    return [f('x'), f('y'), f('z')]
+    return new R2Point(f('x'), f('y'), f('z'))
   })
 }
 
 function binomSimple(n: number, k: number): number {
   return (
-    range(n, 1 + Math.max(k, n - k), -1).reduce(mult, 1) /
-    range(1, 1 + Math.min(k, n - k)).reduce(mult, 1)
+    R.range(Math.max(k, n - k) + 1, n + 1).reduce(mult, 1) /
+    R.range(1, 1 + Math.min(k, n - k)).reduce(mult, 1)
   )
 }

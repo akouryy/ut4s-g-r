@@ -3,6 +3,7 @@ import { zip } from 'lodash'
 import { NoChild } from '../lib/reactUtil'
 import { R2Context, usesWeight, R2Point } from '../lib/r2Base'
 import { R2ControlPoint } from './R2ControlPoint'
+import { R2ControlAlgo } from './R2ControlAlgo'
 
 export const R2Control: React.FC<NoChild> = () => {
   const { points, setPoints, algo } = React.useContext(R2Context)
@@ -23,22 +24,12 @@ export const R2Control: React.FC<NoChild> = () => {
 
   return (
     <div className='R2Control'>
-      <div className='R2Control-Algo'>
-        <label>
-          <input type='radio' value='bezier' />
-          n次有理ベジェ曲線
-        </label>
-        <label>
-          <input type='radio' value='kappa' />
-          κ-Curves
-        </label>
-      </div>
-
+      <R2ControlAlgo />
       <table className='R2Control-Points'>
         <thead>
           <tr>
             <th>x</th>
-            <th>y</th>
+            <th>y(高さ)</th>
             <th>z</th>
             {showWeight && (<th>重み</th>)}
           </tr>

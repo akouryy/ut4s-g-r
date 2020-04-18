@@ -24,6 +24,7 @@ rules:
   arrow-body-style: off
   comma-dangle: [error, only-multiline]
   curly: [error, all]
+  max-classes-per-file: off
   no-var: error
 
   import/extensions:

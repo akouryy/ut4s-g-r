@@ -1,8 +1,8 @@
 import React from 'react'
-import { Canvas } from 'react-three-fiber'
+import { Canvas, PointerEvent } from 'react-three-fiber'
 import { NoChild } from '../lib/reactUtil'
 import { R2Task } from './R2Task'
-import { R2Context } from '../lib/r2Base'
+import { R2Context, R2Point } from '../lib/r2Base'
 import { R2CanvasCamera } from './R2CanvasCamera'
 
 export const R2Canvas: React.FC<NoChild> = () => {
@@ -27,7 +27,17 @@ interface R2CanvasGridProps {
 }
 
 const R2CanvasGrid: React.FC<R2CanvasGridProps & NoChild> = ({ size }) => {
+  const { setPoints } = React.useContext(R2Context)
+  const handleClick = React.useCallback((ev: PointerEvent) => {
+    // ev.preventDefault()
+    ev.stopPropagation()
+    if (ev.altKey) {
+      console.log(ev.point)
+      setPoints((points) => [...points, new R2Point(ev.point)])
+    }
+  }, [setPoints])
+
   return (
-    <gridHelper args={[size, size, 0xdddddd, 0xeeeeee]} />
+    <gridHelper args={[size, size, 0xdddddd, 0xeeeeee]} onClick={handleClick} />
   )
 }
