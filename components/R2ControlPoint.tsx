@@ -1,7 +1,7 @@
 import React from 'react'
 import { NoChild } from '../lib/reactUtil'
-import { R2Point } from '../contexts/R2Context'
-import { EditableText } from './EditableText'
+import { R2Point } from '../lib/r2Base'
+import { NumberInput } from './NumberInput'
 
 interface P {
   point: R2Point
@@ -10,29 +10,36 @@ interface P {
 }
 
 export const R2ControlPoint: React.FC<P & NoChild> = ({ point, setPoint, showWeight }) => {
-  const updateX = React.useCallback((x: string) => {
-    setPoint({ ...point, x: parseInt(x, 10) })
+  const updateX = React.useCallback((x: number) => {
+    setPoint(Object.assign(new R2Point(), point, { x }))
   }, [point, setPoint])
 
-  const updateY = React.useCallback((y: string) => {
-    setPoint({ ...point, y: parseInt(y, 10) })
+  const updateY = React.useCallback((y: number) => {
+    setPoint(Object.assign(new R2Point(), point, { y }))
   }, [point, setPoint])
 
-  const updateWeight = React.useCallback((weight: string) => {
-    setPoint({ ...point, weight: parseInt(weight, 10) })
+  const updateZ = React.useCallback((z: number) => {
+    setPoint(Object.assign(new R2Point(), point, { z }))
+  }, [point, setPoint])
+
+  const updateWeight = React.useCallback((weight: number) => {
+    setPoint(Object.assign(new R2Point(), point, { weight }))
   }, [point, setPoint])
 
   return (
     <tr>
       <td>
-        <EditableText type='number' updateValue={updateX} value={point.x.toString()} />
+        <NumberInput step={0.01} updateValue={updateX} value={point.x} />
       </td>
       <td>
-        <EditableText type='number' updateValue={updateY} value={point.y.toString()} />
+        <NumberInput step={0.01} updateValue={updateY} value={point.y} />
+      </td>
+      <td>
+        <NumberInput step={0.01} updateValue={updateZ} value={point.z} />
       </td>
       {showWeight && (
         <td>
-          <EditableText type='number' updateValue={updateWeight} value={point.weight.toString()} />
+          <NumberInput step={0.01} updateValue={updateWeight} value={point.weight} />
         </td>
       )}
     </tr>

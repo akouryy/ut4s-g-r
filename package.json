@@ -6,21 +6,28 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "d": "next",
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --ext .js,.ts,.tsx ."
+    "l": "eslint --ext .ts,.tsx .",
+    "lint": "eslint --ext .ts,.tsx ."
   },
   "dependencies": {
     "@akouryy/next-less": "^1.1.0",
     "@types/lodash": "^4.14.149",
+    "@types/react-tabs": "^2.3.1",
     "@types/uuid": "^7.0.2",
     "@zeit/next-css": "^1.0.1",
     "less": "^3.11.1",
     "lodash": "^4.17.15",
     "next": "^9.3.5",
+    "normalize.css": "^8.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-tabs": "^3.1.0",
+    "react-three-fiber": "^4.0.28",
+    "three": "^0.115.0",
     "uuid": "^7.0.3"
   },
   "devDependencies": {

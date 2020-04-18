@@ -1,14 +1,14 @@
 import React from 'react'
 import { zip } from 'lodash'
 import { NoChild } from '../lib/reactUtil'
-import { R2Context, createR2Point, usesWeight, R2Point } from '../contexts/R2Context'
+import { R2Context, usesWeight, R2Point } from '../lib/r2Base'
 import { R2ControlPoint } from './R2ControlPoint'
 
 export const R2Control: React.FC<NoChild> = () => {
   const { points, setPoints, algo } = React.useContext(R2Context)
 
   const addPoint = React.useCallback(() => {
-    setPoints((pts) => [...pts, createR2Point()])
+    setPoints((pts) => [...pts, new R2Point()])
   }, [setPoints])
 
   const setPointFns = React.useMemo(() => (
@@ -23,11 +23,23 @@ export const R2Control: React.FC<NoChild> = () => {
 
   return (
     <div className='R2Control'>
+      <div className='R2Control-Algo'>
+        <label>
+          <input type='radio' value='bezier' />
+          n次有理ベジェ曲線
+        </label>
+        <label>
+          <input type='radio' value='kappa' />
+          κ-Curves
+        </label>
+      </div>
+
       <table className='R2Control-Points'>
         <thead>
           <tr>
             <th>x</th>
             <th>y</th>
+            <th>z</th>
             {showWeight && (<th>重み</th>)}
           </tr>
         </thead>

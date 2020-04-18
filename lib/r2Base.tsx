@@ -1,6 +1,6 @@
 import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { notImplemented } from '../lib/errors'
+import { notImplemented } from './errors'
 
 export interface R2ContextProps {
   points: R2Point[]
@@ -9,15 +9,24 @@ export interface R2ContextProps {
   setAlgo(_: R2Algo): void
 }
 
-export interface R2Point {
+export class R2Point {
   id: string
   x: number
   y: number
+  z: number
   weight: number
-}
 
-export function createR2Point(): R2Point {
-  return { id: uuidv4(), x: 0, y: 0, weight: 1 }
+  constructor() {
+    this.id = uuidv4()
+    this.x = 0
+    this.y = 0
+    this.z = 0
+    this.weight = 1
+  }
+
+  toString(): string {
+    return `(${this.x},${this.y}; w=${this.weight})`
+  }
 }
 
 export type R2Algo =

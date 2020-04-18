@@ -1,8 +1,7 @@
 import React from 'react'
-import '../styles/R2.less'
 import { R2Canvas } from './R2Canvas'
-import { R2Control } from './R2Control'
-import { R2AlgoDefault, R2Context, R2Point } from '../contexts/R2Context'
+import { R2Side } from './R2Side'
+import { R2AlgoDefault, R2Context, R2Point } from '../lib/r2Base'
 import { NoChild } from '../lib/reactUtil'
 
 export const R2Main: React.FC<NoChild> = () => {
@@ -13,7 +12,7 @@ export const R2Main: React.FC<NoChild> = () => {
     <R2Context.Provider value={{ points, algo, setPoints, setAlgo }}>
       <div className='R2Main'>
         <R2Canvas />
-        <R2Control />
+        <R2Side />
       </div>
     </R2Context.Provider>
   )

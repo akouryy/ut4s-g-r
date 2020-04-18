@@ -2,6 +2,8 @@ extends:
   - eslint:recommended
   - airbnb
   - plugin:@typescript-eslint/eslint-recommended
+  - plugin:@typescript-eslint/recommended
+  - plugin:@typescript-eslint/recommended-requiring-type-checking
   - standard-with-typescript
   - standard-react
 ignorePatterns:
@@ -20,6 +22,7 @@ plugins:
 root: true
 rules:
   arrow-body-style: off
+  comma-dangle: [error, only-multiline]
   curly: [error, all]
   no-var: error
 
@@ -28,6 +31,10 @@ rules:
     - ts: never
       tsx: never
   import/prefer-default-export: off
+
+  jsx-a11y/label-has-associated-control:
+    - error
+    - { assert: either }
 
   react/jsx-closing-tag-location: off
   react/jsx-filename-extension: off
