@@ -8,7 +8,7 @@ interface P {
   setPoint: (_: R2Point) => void
 }
 
-export const R2ControlPoint: React.FC<P & NoChild> = ({ point, setPoint }) => {
+export const R2ManagePoint: React.FC<P & NoChild> = ({ point, setPoint }) => {
   const { algo } = React.useContext(R2Context)
 
   const updateX = React.useCallback((x: number) => {
@@ -23,26 +23,26 @@ export const R2ControlPoint: React.FC<P & NoChild> = ({ point, setPoint }) => {
     setPoint(Object.assign(new R2Point(), point, { z }))
   }, [point, setPoint])
 
-  const updateWeight = React.useCallback((weight: number) => {
+  const updateW = React.useCallback((weight: number) => {
     setPoint(Object.assign(new R2Point(), point, { weight }))
   }, [point, setPoint])
 
   return (
     <tr>
       <td>
-        <NumberInput step={0.01} updateValue={updateX} value={point.x} />
+        <NumberInput fractoinDigits={2} step={0.01} updateValue={updateX} value={point.x} />
       </td>
       {usesY(algo) && (
         <td>
-          <NumberInput step={0.01} updateValue={updateY} value={point.y} />
+          <NumberInput fractoinDigits={2} step={0.01} updateValue={updateY} value={point.y} />
         </td>
       )}
       <td>
-        <NumberInput step={0.01} updateValue={updateZ} value={point.z} />
+        <NumberInput fractoinDigits={2} step={0.01} updateValue={updateZ} value={point.z} />
       </td>
       {usesWeight(algo) && (
         <td>
-          <NumberInput step={0.01} updateValue={updateWeight} value={point.weight} />
+          <NumberInput fractoinDigits={2} step={0.01} updateValue={updateW} value={point.weight} />
         </td>
       )}
     </tr>

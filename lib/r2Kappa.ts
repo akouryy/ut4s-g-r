@@ -263,7 +263,12 @@ function calcControls(env: Env, iter: number): void {
 
 const ITER = 10
 
-export function calcKappa(points: R2Point[], loop: boolean): R2Point[] {
+export function calcKappa(pointsRaw: R2Point[], loop: boolean): R2Point[] {
+  const points = R.dropRepeatsWith(R.eqBy((p) => p.toVector3()), pointsRaw)
+  if (points.length >= 3 &&
+    points[0].toVector3().equals(points[points.length - 1].toVector3())) {
+    points.pop()
+  }
   if (points.length < 3) {
     return []
   }
@@ -271,16 +276,6 @@ export function calcKappa(points: R2Point[], loop: boolean): R2Point[] {
   const env = new Env(points.map((p) => new Vector2(p.x, p.z)), loop)
 
   calcControls(env, ITER)
-
-  console.log(env.cRaw.points.map((a) => `${a.x} ${a.y}`))
-
-  console.log(R.range(0, loop ? env.n : env.n - 2).flatMap((i) => {
-    const next = (i + 1) % env.n
-    return calcBezier(
-      [env.c(next, 0), env.c(next, 1), env.c(next, 2)].map((v) => new R2Point(v.x, 0, v.y)),
-      false,
-    )
-  }))
 
   return R.range(0, loop ? env.n : env.n - 2).flatMap((i) => {
     const next = (i + 1) % env.n

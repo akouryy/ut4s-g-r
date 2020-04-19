@@ -4,20 +4,25 @@ import { NoChild } from '../lib/reactUtil'
 
 interface P {
   className?: string
+  fractoinDigits?: number
   size?: number
   step?: number
   value: number
   updateValue: (_: number) => void
 }
 
+function toFixed(value: number, fractoinDigits: number | undefined): string {
+  return fractoinDigits ? value.toFixed(fractoinDigits) : value.toString()
+}
+
 export const NumberInput: React.FC<P & NoChild> = ({
-  className, step, value, updateValue
+  className, fractoinDigits, step, value, updateValue
 }) => {
-  const [rawValue, setRawValue] = React.useState(value.toString())
+  const [rawValue, setRawValue] = React.useState(toFixed(value, fractoinDigits))
 
   React.useEffect(() => {
-    setRawValue(value.toString())
-  }, [value])
+    setRawValue(toFixed(value, fractoinDigits))
+  }, [fractoinDigits, value])
 
   const [error, setError] = React.useState(false)
 

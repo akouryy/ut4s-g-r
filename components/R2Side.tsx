@@ -2,18 +2,18 @@ import React from 'react'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 import 'react-tabs/style/react-tabs.less'
 import { NoChild } from '../lib/reactUtil'
-import { R2Control } from './R2Control'
+import { R2Manage } from './R2Manage'
 
 export const R2Side: React.FC<NoChild> = () => {
   return (
     <Tabs className='R2Side'>
       <TabList>
-        <Tab>設定</Tab>
+        <Tab>管理</Tab>
         <Tab>操作方法</Tab>
       </TabList>
 
       <TabPanel>
-        <R2Control />
+        <R2Manage />
       </TabPanel>
       <TabPanel>
         <section>

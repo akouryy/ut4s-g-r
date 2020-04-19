@@ -5,8 +5,8 @@ import { calcKappa } from './r2Kappa'
 
 export function calcVertices(points: R2Point[], algo: R2Algo): R2Point[] {
   switch (algo.kind) {
-    case 'Bezier': return calcBezier(points, algo.deCasteljau)
-    case 'Kappa': return calcKappa(points, true)
+    case 'Bezier': return calcBezier(points, algo.opts.deCasteljau)
+    case 'Kappa': return calcKappa(points, algo.opts.loop)
     default: return []
   }
 }

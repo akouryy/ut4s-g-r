@@ -33,34 +33,37 @@ export class R2Point {
   }
 
   toString(): string {
-    return `(${this.x},${this.y}; w=${this.weight})`
+    return `(${this.x},${this.y},${this.z}; w=${this.weight})`
   }
 }
 
 export type R2AlgoKind = 'Bezier' | 'CatmullRom' | 'BSpline' | 'NURBS' | 'Kappa'
 
+export interface R2AlgoOpts {deCasteljau: boolean, loop: boolean}
+
 export class R2Algo {
-  kind: R2AlgoKind
-  deCasteljau: boolean
+  readonly kind: R2AlgoKind
+  readonly opts: R2AlgoOpts
 
-  constructor()
-  constructor(kind: R2AlgoKind)
-  constructor(kind: R2AlgoKind, deCasteljau: boolean)
-
-  constructor(kind: R2AlgoKind = 'Bezier', deCasteljau = false) {
+  constructor(kind: R2AlgoKind = 'Bezier', opts: Partial<R2AlgoOpts> = {}) {
     this.kind = kind
-    this.deCasteljau = deCasteljau
+    this.opts = { deCasteljau: false, loop: true, ...opts }
   }
 
-  copyWith(diff: Partial<R2Algo>): R2Algo {
-    return Object.assign(new R2Algo(), this, diff)
+  withKind(kind: R2AlgoKind): R2Algo {
+    return new R2Algo(kind, this.opts)
+  }
+
+  withOptsDiff(diff: Partial<R2AlgoOpts>): R2Algo {
+    return new R2Algo(this.kind, { ...this.opts, ...diff })
   }
 
   toString(): string {
     return [
       'Algo(',
       this.kind,
-      this.deCasteljau && ' (de Casteljau)',
+      this.opts.deCasteljau && ' (de Casteljau)',
+      this.opts.loop && ' (loop)',
     ].filter((x) => x).join('')
   }
 }
@@ -72,7 +75,7 @@ export const R2AlgoNames: { [_ in R2AlgoKind]: string } = {
   CatmullRom: 'Catmull-Romスプライン',
   BSpline: 'Bスプライン',
   NURBS: 'NURBS',
-  Kappa: 'κ-Curves',
+  Kappa: 'κ曲線',
 }
 
 export function usesY(algo: R2Algo): boolean {
@@ -80,7 +83,7 @@ export function usesY(algo: R2Algo): boolean {
 }
 
 export function usesWeight(algo: R2Algo): boolean {
-  return algo.kind === 'Bezier' && !algo.deCasteljau
+  return algo.kind === 'Bezier' && !algo.opts.deCasteljau
 }
 
 export interface R2ContextProps {

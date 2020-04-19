@@ -1,20 +1,23 @@
 .R2 {
   &Canvas {
     border: 3px outset #977;
-    height: 45vw;
+    height: calc(90vh - 4rem);
     width: 45vw;
   }
 
-  &Control {
+  &Manage {
     &-Points {
       border-collapse: collapse;
-      margin-top: 1rem;
       text-align: center;
 
       th, td{
         border: 1px solid #aaa;
         min-width: 6.5rem;
       }
+    }
+
+    &-Title {
+      margin: 0.5rem 0 0;
     }
   }
 
@@ -38,8 +41,9 @@
     width: 45vw;
 
     & > .react-tabs__tab-panel--selected {
-      min-height: 40vw;
       border: 3px inset #977;
+      height: calc(90vh - 6rem);
+      overflow-y: scroll;
     }
   }
 }
