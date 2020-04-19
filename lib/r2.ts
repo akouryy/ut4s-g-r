@@ -1,17 +1,19 @@
 import * as R from 'ramda'
 import { R2Algo, R2Point } from './r2Base'
 import { mult, plus } from './fn'
+import { calcKappa } from './r2Kappa'
 
 export function calcVertices(points: R2Point[], algo: R2Algo): R2Point[] {
   switch (algo.kind) {
     case 'Bezier': return calcBezier(points, algo.deCasteljau)
+    case 'Kappa': return calcKappa(points, true)
     default: return []
   }
 }
 
 const NVertices = 100
 
-function calcBezier(points: R2Point[], deCasteljau: boolean): R2Point[] {
+export function calcBezier(points: R2Point[], deCasteljau: boolean): R2Point[] {
   const n = points.length - 1
 
   if (n < 2) {

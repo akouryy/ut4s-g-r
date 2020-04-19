@@ -1,7 +1,7 @@
 import React from 'react'
 import { zip } from 'lodash'
 import { NoChild } from '../lib/reactUtil'
-import { R2Context, usesWeight, R2Point } from '../lib/r2Base'
+import { R2Context, usesWeight, R2Point, usesY } from '../lib/r2Base'
 import { R2ControlPoint } from './R2ControlPoint'
 import { R2ControlAlgo } from './R2ControlAlgo'
 
@@ -20,8 +20,6 @@ export const R2Control: React.FC<NoChild> = () => {
     }))
   ), [points, setPoints])
 
-  const showWeight = usesWeight(algo)
-
   return (
     <div className='R2Control'>
       <R2ControlAlgo />
@@ -29,9 +27,9 @@ export const R2Control: React.FC<NoChild> = () => {
         <thead>
           <tr>
             <th>x</th>
-            <th>y(高さ)</th>
+            {usesY(algo) && (<th>y(高さ)</th>)}
             <th>z</th>
-            {showWeight && (<th>重み</th>)}
+            {usesWeight(algo) && (<th>重み</th>)}
           </tr>
         </thead>
         <tbody>
@@ -39,7 +37,6 @@ export const R2Control: React.FC<NoChild> = () => {
             <R2ControlPoint
               point={point}
               setPoint={setPoint}
-              showWeight={showWeight}
               key={point.id}
             />
           ))}

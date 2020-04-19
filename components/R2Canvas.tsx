@@ -32,12 +32,19 @@ const R2CanvasGrid: React.FC<R2CanvasGridProps & NoChild> = ({ size }) => {
     // ev.preventDefault()
     ev.stopPropagation()
     if (ev.altKey) {
-      console.log(ev.point)
-      setPoints((points) => [...points, new R2Point(ev.point)])
+      setPoints((points) => (
+        [...points, new R2Point(ev.point.multiplyScalar(100).round().divideScalar(100))]
+      ))
     }
   }, [setPoints])
 
   return (
-    <gridHelper args={[size, size, 0xdddddd, 0xeeeeee]} onClick={handleClick} />
+    <group>
+      <gridHelper args={[size, size, 0xdddddd, 0xeeeeee]} />
+      <mesh position={[0, 0, 0]} rotation={[Math.PI * 1.5, 0, 0]} onClick={handleClick}>
+        <planeGeometry args={[size, size]} attach='geometry' />
+        <meshBasicMaterial attach='material' color={0xff0000} opacity={0} transparent />
+      </mesh>
+    </group>
   )
 }

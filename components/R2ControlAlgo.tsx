@@ -6,7 +6,8 @@ import { R2Context, R2AlgoKinds, R2AlgoNames, R2AlgoKind } from '../lib/r2Base'
 export const R2ControlAlgo: React.FC<NoChild> = () => {
   const { algo, setAlgo } = React.useContext(R2Context)
 
-  const [uuid] = React.useState(() => uuidv4())
+  const [uuid, setUUID] = React.useState(() => '')
+  React.useEffect(() => setUUID(uuidv4()), [])
 
   const setKind = React.useCallback((kind: R2AlgoKind) => {
     setAlgo((a) => a.copyWith({ kind }))
@@ -35,15 +36,24 @@ export const R2ControlAlgo: React.FC<NoChild> = () => {
         ))}
       </section>
       {algo.kind === 'Bezier' && (
-        <label>
-          <input
-            checked={algo.deCasteljau}
-            name={`${uuid}-decasteljau`}
-            onChange={setDeCasteljau}
-            type='checkbox'
-          />
-          de Casteljau法を使う
-        </label>
+        <>
+          <label>
+            <input
+              checked={algo.deCasteljau}
+              name={`${uuid}-decasteljau`}
+              onChange={setDeCasteljau}
+              type='checkbox'
+            />
+            de Casteljau法
+          </label>
+          <label>
+            <input
+              disabled
+              type='checkbox'
+            />
+            適応的サンプリング
+          </label>
+        </>
       )}
     </div>
   )

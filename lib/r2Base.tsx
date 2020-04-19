@@ -75,6 +75,10 @@ export const R2AlgoNames: { [_ in R2AlgoKind]: string } = {
   Kappa: 'κ-Curves',
 }
 
+export function usesY(algo: R2Algo): boolean {
+  return algo.kind === 'Bezier'
+}
+
 export function usesWeight(algo: R2Algo): boolean {
   return algo.kind === 'Bezier' && !algo.deCasteljau
 }
