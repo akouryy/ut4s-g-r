@@ -3,15 +3,24 @@ import React from 'react'
 import { NoChild } from '../lib/reactUtil'
 import { R2Context } from '../lib/r2Base'
 import { forceGeometryUpdate } from '../lib/threeUtil'
-import { calcVertices } from '../lib/r2'
+import { calcVertices } from '../lib/r2Task'
 
 export const R2Task: React.FC<NoChild> = () => {
-  const { algo, points } = React.useContext(R2Context)
+  const { algo, points, addMessage } = React.useContext(R2Context)
 
   const pointVertices = points.map(({ x, y, z }) => new Vector3(x, y, z))
   const lineVertices = React.useMemo(
-    () => calcVertices(points, algo).map((arr) => arr.toVector3()),
-    [algo, points],
+    () => {
+      try {
+        const ret = calcVertices(points, algo).map((arr) => arr.toVector3())
+        addMessage('components/R2Task', null)
+        return ret
+      } catch (err) {
+        addMessage('components/R2Task', err.message)
+        return []
+      }
+    },
+    [addMessage, algo, points],
   )
 
   return (

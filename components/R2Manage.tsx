@@ -1,5 +1,4 @@
 import React from 'react'
-import { zip } from 'lodash'
 import { NoChild } from '../lib/reactUtil'
 import { R2Context, usesWeight, R2Point, usesY } from '../lib/r2Base'
 import { R2ManagePoint } from './R2ManagePoint'
@@ -12,14 +11,6 @@ export const R2Manage: React.FC<NoChild> = () => {
     setPoints((pts) => [...pts, new R2Point()])
   }, [setPoints])
 
-  const setPointFns = React.useMemo(() => (
-    points.map((_, i) => (newPoint: R2Point) => setPoints((oldPoints) => {
-      const pts = [...oldPoints]
-      pts[i] = newPoint
-      return pts
-    }))
-  ), [points, setPoints])
-
   return (
     <div className='R2Manage'>
       <R2ManageAlgo />
@@ -27,18 +18,21 @@ export const R2Manage: React.FC<NoChild> = () => {
       <table className='R2Manage-Points'>
         <thead>
           <tr>
-            <th>x</th>
-            {usesY(algo) && (<th>y(高さ)</th>)}
-            <th>z</th>
-            {usesWeight(algo) && (<th>重み</th>)}
+            <th className='R2Manage-PointsCellWide'>x</th>
+            {usesY(algo) && (<th className='R2Manage-PointsCellWide'>y(高さ)</th>)}
+            <th className='R2Manage-PointsCellWide'>z</th>
+            {usesWeight(algo) && (<th className='R2Manage-PointsCellWide'>重み</th>)}
+            <th>操作</th>
+            <th className='R2Manage-PointsID'>ID</th>
           </tr>
         </thead>
         <tbody>
-          {zip(points, setPointFns).map(([point, setPoint]) => point && setPoint && (
+          {points.map((point, i) => point && (
             <R2ManagePoint
-              point={point}
-              setPoint={setPoint}
+              index={i}
+              isLast={i === points.length - 1}
               key={point.id}
+              point={point}
             />
           ))}
         </tbody>

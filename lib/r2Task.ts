@@ -7,7 +7,7 @@ export function calcVertices(points: R2Point[], algo: R2Algo): R2Point[] {
   switch (algo.kind) {
     case 'Bezier': return calcBezier(points, algo.opts.deCasteljau)
     case 'Kappa': return calcKappa(points, algo.opts.loop)
-    default: return []
+    default: throw new Error('この曲線は未実装です')
   }
 }
 
@@ -17,7 +17,7 @@ export function calcBezier(points: R2Point[], deCasteljau: boolean): R2Point[] {
   const n = points.length - 1
 
   if (n < 2) {
-    return []
+    throw new Error('[Bezier] 点を3つ以上指定してください')
   }
 
   if (deCasteljau) {

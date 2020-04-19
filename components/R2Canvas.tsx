@@ -8,16 +8,30 @@ import { R2CanvasCamera } from './R2CanvasCamera'
 export const R2Canvas: React.FC<NoChild> = () => {
   // https://github.com/react-spring/react-three-fiber/issues/262
   const r2Context = React.useContext(R2Context)
+  const { messages } = r2Context
 
   return (
-    <div className='R2Canvas'>
-      <Canvas camera={{ position: [0, 30, 0] }}>
-        <R2Context.Provider value={r2Context}>
-          <R2CanvasCamera />
-          <R2CanvasGrid size={50} />
-          <R2Task />
-        </R2Context.Provider>
-      </Canvas>
+    <div className='R2Canvas-Wrapper'>
+      <div className='R2Canvas'>
+        <Canvas camera={{ position: [0, 30, 0] }}>
+          <R2Context.Provider value={r2Context}>
+            <R2CanvasCamera />
+            <R2CanvasGrid size={50} />
+            <R2Task />
+          </R2Context.Provider>
+        </Canvas>
+      </div>
+      <ul className='R2Canvas-Messages'>
+        {Object.entries(messages).map(([key, message]) => (
+          message ? (
+            <li key={key}>
+              {message}
+            </li>
+          ) : (
+            <></>
+          )
+        ))}
+      </ul>
     </div>
   )
 }

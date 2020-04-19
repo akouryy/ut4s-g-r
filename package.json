@@ -21,7 +21,6 @@
     "@types/uuid": "^7.0.2",
     "@zeit/next-css": "^1.0.1",
     "less": "^3.11.1",
-    "lodash": "^4.17.15",
     "next": "^9.3.5",
     "normalize.css": "^8.0.1",
     "ramda": "^0.27.0",

@@ -5,16 +5,17 @@ import { notImplemented } from './errors'
 
 export class R2Point {
   id: string
-  x: number
-  y: number
-  z: number
-  weight: number
+  readonly x: number
+  readonly y: number
+  readonly z: number
+  readonly weight: number
 
   constructor()
   constructor(x: number, y: number, z: number)
+  constructor(x: number, y: number, z: number, weight: number)
   constructor(v3: Vector3)
 
-  constructor(x: number | Vector3 = 0, y = 0, z = 0) {
+  constructor(x: number | Vector3 = 0, y = 0, z = 0, weight = 1) {
     this.id = uuidv4()
     if (typeof x === 'number') {
       this.x = x
@@ -25,7 +26,8 @@ export class R2Point {
       this.y = x.y
       this.z = x.z
     }
-    this.weight = 1
+    console.assert(weight !== 0)
+    this.weight = weight
   }
 
   toVector3(): Vector3 {
@@ -79,23 +81,29 @@ export const R2AlgoNames: { [_ in R2AlgoKind]: string } = {
 }
 
 export function usesY(algo: R2Algo): boolean {
-  return algo.kind === 'Bezier'
+  return algo.kind === 'Bezier' || algo.kind === 'Kappa'
 }
 
 export function usesWeight(algo: R2Algo): boolean {
   return algo.kind === 'Bezier' && !algo.opts.deCasteljau
 }
 
+export type R2Messages = {[_ in string]?: string | null}
+
 export interface R2ContextProps {
+  messages: R2Messages
   points: R2Point[]
   algo: R2Algo
-  setPoints(_: (_: R2Point[]) => R2Point[]): void
-  setAlgo(_: (_: R2Algo) => R2Algo): void
+  addMessage(key: string, message: string | null): void
+  setPoints(_: R2Point[] | ((_: R2Point[]) => R2Point[])): void
+  setAlgo(_: R2Algo | ((_: R2Algo) => R2Algo)): void
 }
 
 export const R2Context = React.createContext<R2ContextProps>({
+  messages: {},
   points: [],
   algo: new R2Algo(),
+  addMessage() { notImplemented() },
   setPoints() { notImplemented() },
-  setAlgo() { notImplemented() }
+  setAlgo() { notImplemented() },
 })

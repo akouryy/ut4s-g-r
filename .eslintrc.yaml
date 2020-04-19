@@ -31,6 +31,9 @@ rules:
     - groups:
         - ["&", "|", "^", "~", "<<", ">>", ">>>"]
         - ["==", "!=", "===", "!==", ">", ">=", "<", "<=", "in", "instanceof"]
+  no-param-reassign:
+    - error
+    - props: false
   no-plusplus: off # bugs will be fixed soon
     #- error
     #- allowForLoopAfterthoughts: true

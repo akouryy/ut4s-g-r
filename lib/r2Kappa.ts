@@ -1,25 +1,25 @@
 /* eslint-disable no-param-reassign */
 // https://qiita.com/Rijicho_nl/items/05ee4c8d77e99e29daa5
 import * as R from 'ramda'
-import { Vector2 } from 'three'
-import { calcBezier } from './r2'
+import { Vector3 } from 'three'
+import { calcBezier } from './r2Task'
 import { R2Point } from './r2Base'
 
 class Controls {
-  readonly points: Vector2[]
+  readonly points: Vector3[]
   readonly segmentCount: number
 
   constructor(n: number) {
     console.assert(n >= 3)
     this.segmentCount = n
-    this.points = [...Array(this.segmentCount * 2 + 1)].map(() => new Vector2())
+    this.points = [...Array(this.segmentCount * 2 + 1)].map(() => new Vector3())
   }
 
-  get(i: number, j: number): Vector2 {
+  get(i: number, j: number): Vector3 {
     return this.points[i * 2 + j]
   }
 
-  set(i: number, j: number, vec: Vector2): void {
+  set(i: number, j: number, vec: Vector3): void {
     this.points[i * 2 + j] = vec
   }
 }
@@ -27,14 +27,14 @@ class Controls {
 class Env {
   readonly n: number
   readonly nRange: number[]
-  readonly p: readonly Vector2[]
+  readonly p: readonly Vector3[]
   readonly loop: boolean
   readonly λ: Float32Array
   readonly cRaw: Controls
   readonly t: Float64Array
   readonly A: Float64Array
 
-  constructor(p: Vector2[], loop: boolean) {
+  constructor(p: Vector3[], loop: boolean) {
     this.n = p.length
     this.nRange = R.range(0, this.n)
     this.p = p
@@ -45,24 +45,24 @@ class Env {
     this.A = new Float64Array((this.n + 2) * 3)
   }
 
-  c(i: number, j: number): Vector2 {
+  c(i: number, j: number): Vector3 {
     console.assert(0 <= i && i < this.n && 0 <= j && j <= 2)
     return this.cRaw.get(i, j)
   }
 }
 
 class XArrayView {
-  private readonly head: Vector2
-  private readonly mid: readonly Vector2[]
-  private readonly last: Vector2
+  private readonly head: Vector3
+  private readonly mid: readonly Vector3[]
+  private readonly last: Vector3
 
-  constructor(head: Vector2, mid: readonly Vector2[], last: Vector2) {
+  constructor(head: Vector3, mid: readonly Vector3[], last: Vector3) {
     this.head = head
     this.mid = mid
     this.last = last
   }
 
-  get(i: number): Vector2 {
+  get(i: number): Vector3 {
     if (i === 0) { return this.head }
     if (i > this.mid.length) { return this.last }
     return this.mid[i - 1]
@@ -70,17 +70,17 @@ class XArrayView {
 }
 
 class XControlsView {
-  private readonly head: Vector2
+  private readonly head: Vector3
   private readonly mid: Controls
-  private readonly last: Vector2
+  private readonly last: Vector3
 
-  constructor(head: Vector2, mid: Controls, last: Vector2) {
+  constructor(head: Vector3, mid: Controls, last: Vector3) {
     this.head = head
     this.mid = mid
     this.last = last
   }
 
-  get(i: number): Vector2 {
+  get(i: number): Vector3 {
     if (i === 0) { return this.head }
     if (i > this.mid.segmentCount) { return this.last }
     return this.mid.get(i - 1, 1)
@@ -111,8 +111,8 @@ function step0(env: Env): void {
 }
 
 function step1(env: Env): void {
-  function area(p: Vector2, q: Vector2, r: Vector2): number {
-    return Math.abs(p.clone().sub(r).cross(q.clone().sub(r))) / 2
+  function area(p: Vector3, q: Vector3, r: Vector3): number {
+    return Math.abs(p.clone().sub(r).cross(q.clone().sub(r)).length()) / 2
   }
 
   const { n } = env
@@ -180,7 +180,7 @@ function step3(env: Env): void {
       return X3mAd3
     }
 
-    throw new Error(`Invalid solution: ${X1mAd3}, ${X2mAd3}, ${X3mAd3}`)
+    throw new Error(`[Kappa] 3次方程式の解の算出に失敗しました (${X1mAd3}, ${X2mAd3}, ${X3mAd3})`)
   }
 
   env.nRange.forEach((i) => {
@@ -190,16 +190,17 @@ function step3(env: Env): void {
       env.t[i] = 0
     } else if (env.p[i].equals(env.c(i, 2))) {
       env.t[i] = 1
+    } else {
+      const c2 = env.c(i, 2).clone().sub(env.c(i, 0))
+      const p = env.p[i].clone().sub(env.c(i, 0))
+
+      const a = c2.lengthSq()
+      const b = -3 * c2.dot(p)
+      const c = p.dot(p.clone().multiplyScalar(2).add(c2))
+      const d = -p.lengthSq()
+
+      env.t[i] = cardanoReal(a, b, c, d)
     }
-    const c2 = env.c(i, 2).clone().sub(env.c(i, 0))
-    const p = env.p[i].clone().sub(env.c(i, 0))
-
-    const a = c2.lengthSq()
-    const b = -3 * c2.dot(p)
-    const c = p.dot(p.clone().multiplyScalar(2).add(c2))
-    const d = -p.lengthSq()
-
-    env.t[i] = cardanoReal(a, b, c, d)
   })
 }
 
@@ -263,24 +264,19 @@ function calcControls(env: Env, iter: number): void {
 
 const ITER = 10
 
-export function calcKappa(pointsRaw: R2Point[], loop: boolean): R2Point[] {
-  const points = R.dropRepeatsWith(R.eqBy((p) => p.toVector3()), pointsRaw)
-  if (points.length >= 3 &&
-    points[0].toVector3().equals(points[points.length - 1].toVector3())) {
-    points.pop()
-  }
+export function calcKappa(points: R2Point[], loop: boolean): R2Point[] {
   if (points.length < 3) {
-    return []
+    throw new Error('[Kappa] 点を3つ以上指定してください')
   }
 
-  const env = new Env(points.map((p) => new Vector2(p.x, p.z)), loop)
+  const env = new Env(points.map((p) => p.toVector3()), loop)
 
   calcControls(env, ITER)
 
   return R.range(0, loop ? env.n : env.n - 2).flatMap((i) => {
     const next = (i + 1) % env.n
     return calcBezier(
-      [env.c(next, 0), env.c(next, 1), env.c(next, 2)].map((v) => new R2Point(v.x, 0, v.y)),
+      [env.c(next, 0), env.c(next, 1), env.c(next, 2)].map((v) => new R2Point(v)),
       false,
     )
   })
