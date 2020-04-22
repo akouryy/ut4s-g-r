@@ -2,7 +2,7 @@ import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { NumberInput } from './NumberInput'
 import { NoChild } from '../lib/reactUtil'
-import { R2Context, R2AlgoKinds, R2AlgoNames, R2AlgoKind } from '../lib/r2Base'
+import { R2Context, R2AlgoKinds, R2AlgoNames, R2AlgoKind, R2AlgoCRKnot, R2AlgoCRKnots } from '../lib/r2Base'
 import { calcBezierCut } from '../lib/r2Task'
 
 export const R2ManageAlgo: React.FC<NoChild> = () => {
@@ -18,6 +18,10 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
   const setDeCasteljau = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
     const deCasteljau = ev.target.checked
     setAlgo((a) => a.withOptsDiff({ deCasteljau }))
+  }, [setAlgo])
+
+  const setKnot = React.useCallback((knot: R2AlgoCRKnot) => {
+    setAlgo((a) => a.withOptsDiff({ knot }))
   }, [setAlgo])
 
   const setLoop = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,6 +103,35 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
             </div>
           )}
         </div>
+      )}
+      {algo.kind === 'CatmullRom' && (
+        <>
+          {OptsHeader}
+          {R2AlgoCRKnots.map((knot) => (
+            <label className='R2ManageAlgo-RadioLabel' key={knot}>
+              <input
+                checked={algo.opts.knot === knot}
+                name={`${uuid}-knot`}
+                onChange={() => setKnot(knot)}
+                type='radio'
+                value={knot}
+              />
+              {knot}
+            </label>
+          ))}
+          <div>
+            <label>
+              <input
+                checked
+                name={`${uuid}-loop`}
+                // onChange={setLoop}
+                readOnly
+                type='checkbox'
+              />
+              ループする
+            </label>
+          </div>
+        </>
       )}
       {algo.kind === 'Kappa' && (
         <>

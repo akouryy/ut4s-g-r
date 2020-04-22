@@ -23,12 +23,10 @@ export const R2Canvas: React.FC<NoChild> = () => {
       </div>
       <ul className='R2Canvas-Messages'>
         {Object.entries(messages).map(([key, message]) => (
-          message ? (
+          message && (
             <li key={key}>
               {message}
             </li>
-          ) : (
-            <></>
           )
         ))}
       </ul>
@@ -54,7 +52,7 @@ const R2CanvasGrid: React.FC<R2CanvasGridProps & NoChild> = ({ size }) => {
 
   return (
     <group>
-      <gridHelper args={[size, size, 0xdddddd, 0xeeeeee]} />
+      <gridHelper args={[size, size, 0xdddddd, 0xeeeeee]} position={[0, -0.01, 0]} />
       <mesh position={[0, 0, 0]} rotation={[Math.PI * 1.5, 0, 0]} onClick={handleClick}>
         <planeGeometry args={[size * 3, size * 3]} attach='geometry' />
         <meshBasicMaterial attach='material' color={0xff0000} opacity={0} transparent />
