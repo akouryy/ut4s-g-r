@@ -2,29 +2,30 @@ import React from 'react'
 import '../styles/NumberInput.less'
 import { NoChild } from '../lib/reactUtil'
 
-interface P {
-  className?: string
-  fractoinDigits?: number
-  size?: number
-  step?: number
+type P = React.InputHTMLAttributes<HTMLInputElement> & {
+  fractionDigits?: number
+  onChange?: never
+  type?: never
   value: number
   updateValue: (_: number) => void
 }
 
-function toFixed(value: number, fractoinDigits: number | undefined): string {
-  return fractoinDigits ? value.toFixed(fractoinDigits) : value.toString()
+function toFixed(value: number, fractionDigits: number | undefined): string {
+  return fractionDigits ? value.toFixed(fractionDigits) : value.toString()
 }
 
 export const NumberInput: React.FC<P & NoChild> = ({
-  className, fractoinDigits, step, value, updateValue
+  className, fractionDigits, value, updateValue, ...props
 }) => {
-  const [rawValue, setRawValue] = React.useState(toFixed(value, fractoinDigits))
-
-  React.useEffect(() => {
-    setRawValue(toFixed(value, fractoinDigits))
-  }, [fractoinDigits, value])
+  const [rawValue, setRawValue] = React.useState(toFixed(value, fractionDigits))
 
   const [error, setError] = React.useState(false)
+
+  React.useEffect(() => {
+    if (!error && value !== parseFloat(rawValue)) {
+      setRawValue(toFixed(value, fractionDigits))
+    }
+  }, [error, fractionDigits, rawValue, value])
 
   const handleChange = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
     ev.preventDefault()
@@ -43,9 +44,10 @@ export const NumberInput: React.FC<P & NoChild> = ({
   return (
     <span className={`${cls}-Container`}>
       <input
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...props}
         className={cls}
         onChange={handleChange}
-        step={step}
         type='number'
         value={rawValue}
       />

@@ -57,19 +57,19 @@ export const R2ManagePoint: React.FC<P & NoChild> = ({ index: i, isLast, point }
   return (
     <tr>
       <td>
-        <NumberInput fractoinDigits={2} step={0.01} updateValue={updateX} value={point.x} />
+        <NumberInput fractionDigits={2} step={0.01} updateValue={updateX} value={point.x} />
       </td>
       {usesY(algo) && (
         <td>
-          <NumberInput fractoinDigits={2} step={0.01} updateValue={updateY} value={point.y} />
+          <NumberInput fractionDigits={2} step={0.01} updateValue={updateY} value={point.y} />
         </td>
       )}
       <td>
-        <NumberInput fractoinDigits={2} step={0.01} updateValue={updateZ} value={point.z} />
+        <NumberInput fractionDigits={2} step={0.01} updateValue={updateZ} value={point.z} />
       </td>
       {usesWeight(algo) && (
         <td>
-          <NumberInput fractoinDigits={2} step={0.01} updateValue={updateW} value={point.weight} />
+          <NumberInput fractionDigits={2} step={0.01} updateValue={updateW} value={point.weight} />
         </td>
       )}
       <td>

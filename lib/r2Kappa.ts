@@ -262,22 +262,23 @@ function calcControls(env: Env, iter: number): void {
   step2(env)
 }
 
-const ITER = 10
-
-export function calcKappa(points: R2Point[], loop: boolean): R2Point[] {
+export function calcKappa(
+  points: R2Point[],
+  { iter, loop, nSample }: { iter: number, loop: boolean, nSample: number },
+): R2Point[] {
   if (points.length < 3) {
     throw new Error('[Kappa] 点を3つ以上指定してください')
   }
 
   const env = new Env(points.map((p) => p.toVector3()), loop)
 
-  calcControls(env, ITER)
+  calcControls(env, iter)
 
   return R.range(0, loop ? env.n : env.n - 2).flatMap((i) => {
     const next = (i + 1) % env.n
     return calcBezier(
       [env.c(next, 0), env.c(next, 1), env.c(next, 2)].map((v) => new R2Point(v)),
-      false,
+      { deCasteljau: false, nSample: nSample / points.length },
     )
   })
 }

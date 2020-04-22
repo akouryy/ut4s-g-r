@@ -56,7 +56,7 @@ const R2CanvasGrid: React.FC<R2CanvasGridProps & NoChild> = ({ size }) => {
     <group>
       <gridHelper args={[size, size, 0xdddddd, 0xeeeeee]} />
       <mesh position={[0, 0, 0]} rotation={[Math.PI * 1.5, 0, 0]} onClick={handleClick}>
-        <planeGeometry args={[size, size]} attach='geometry' />
+        <planeGeometry args={[size * 3, size * 3]} attach='geometry' />
         <meshBasicMaterial attach='material' color={0xff0000} opacity={0} transparent />
       </mesh>
     </group>

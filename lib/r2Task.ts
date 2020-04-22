@@ -5,15 +5,16 @@ import { calcKappa } from './r2Kappa'
 
 export function calcVertices(points: R2Point[], algo: R2Algo): R2Point[] {
   switch (algo.kind) {
-    case 'Bezier': return calcBezier(points, algo.opts.deCasteljau)
-    case 'Kappa': return calcKappa(points, algo.opts.loop)
+    case 'Bezier': return calcBezier(points, { deCasteljau: algo.opts.deCasteljau, nSample: 100 })
+    case 'Kappa': return calcKappa(points, { iter: 10, loop: algo.opts.loop, nSample: 1000 })
     default: throw new Error('この曲線は未実装です')
   }
 }
 
-const NVertices = 100
-
-export function calcBezier(points: R2Point[], deCasteljau: boolean): R2Point[] {
+export function calcBezier(
+  points: R2Point[],
+  { deCasteljau, nSample }: {deCasteljau: boolean, nSample: number},
+): R2Point[] {
   const n = points.length - 1
 
   if (n < 2) {
@@ -21,23 +22,16 @@ export function calcBezier(points: R2Point[], deCasteljau: boolean): R2Point[] {
   }
 
   if (deCasteljau) {
-    return R.range(0, NVertices + 1).map((tBase) => {
-      const t = tBase / NVertices
+    return R.range(0, nSample + 1).map((tBase) => {
+      const t = tBase / nSample
 
-      let step = points
-      R.range(0, n).forEach(() => {
-        step = R.aperture(2, step).map(([a, b]) => {
-          return new R2Point(...Array<'x'|'y'|'z'>('x', 'y', 'z').map((prop) => {
-            return a[prop] * (1 - t) + b[prop] * t
-          }) as [number, number, number])
-        })
-      })
-      return step[0]
+      const cut = calcBezierCut(points, t)
+      return cut[cut.length - 1]
     })
   }
 
-  return R.range(0, NVertices + 1).map((tBase) => {
-    const t = tBase / NVertices
+  return R.range(0, nSample + 1).map((tBase) => {
+    const t = tBase / nSample
     const f = (prop: 'x' | 'y' | 'z'): number => {
       let normalizer = 0
       return points.map((pt, i) => {
@@ -55,4 +49,30 @@ function binomSimple(n: number, k: number): number {
     R.range(Math.max(k, n - k) + 1, n + 1).reduce(mult, 1) /
     R.range(1, 1 + Math.min(k, n - k)).reduce(mult, 1)
   )
+}
+
+export function calcBezierCut(points: R2Point[], splitAt: number): R2Point[] {
+  if (splitAt < 0 || 1 < splitAt) {
+    throw new Error('[Bezier/Cut] 切断点は0以上1以下で指定してください')
+  }
+
+  const n = points.length - 1
+
+  if (n < 2) {
+    throw new Error('[Bezier/Cut] 点を3つ以上指定してください')
+  }
+
+  let step = points
+  const temps = [step[0]]
+
+  R.range(0, n).forEach(() => {
+    step = R.aperture(2, step).map(([a, b]) => {
+      return new R2Point(...Array<'x' | 'y' | 'z'>('x', 'y', 'z').map((prop) => {
+        return a[prop] * (1 - splitAt) + b[prop] * splitAt
+      }) as [number, number, number])
+    })
+    temps.push(step[0])
+  })
+
+  return temps
 }
