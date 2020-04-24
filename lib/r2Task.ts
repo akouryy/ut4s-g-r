@@ -10,6 +10,7 @@ export function calcVertices(points: R2Point[], algo: R2Algo): R2Point[] {
   switch (algo.kind) {
     case 'Bezier': return calcBezier(points, { deCasteljau: algo.opts.deCasteljau, nSample })
     case 'CatmullRom': return calcCatmullRom(points, { knot: algo.opts.knot, nSample })
+    case 'NURBS': return calcNURBS(points, { ...algo.opts, nSample })
     case 'Kappa': return calcKappa(points, { iter: 10, loop: algo.opts.loop, nSample })
     default: throw new Error('この曲線は未実装です')
   }
@@ -142,9 +143,66 @@ export function calcCatmullRom(
         return pl.clone().lerp(pr, (t - tl) / (tr - tl))
       })
 
-      console.log(cs)
       return new R2Point(cs[0])
     }),
     pointsRaw[0],
   ]
+}
+
+export function calcNURBS(
+  points: R2Point[],
+  { degree, nSample, openUniform }: { degree: number, nSample: number, openUniform: boolean },
+): R2Point[] {
+  if (degree <= 1 || !Number.isInteger(degree)) {
+    throw new Error('[NURBS] 次数は2以上の整数を指定してください')
+  }
+
+  const m = points.length
+
+  if (m <= degree) {
+    throw new Error('[NURBS] 点を(次数+1)個以上指定してください')
+  }
+
+  const knots = openUniform
+    ? [...R.repeat(0, degree), ...R.range(0, m - degree + 1), ...R.repeat(m - degree, degree)]
+    : R.range(0, m + degree + 1)
+
+  let log = false
+
+  function basis(n: number, i: number, t: number): number {
+    if (n === 0) {
+      if (log) {
+        console.log(n, i, knots[i] !== undefined &&
+        knots[i] <= t && (t < knots[i + 1] || knots[i + 1] === undefined))
+      }
+      return (
+        knots[i] !== undefined &&
+        knots[i] <= t && (t < knots[i + 1] || knots[i + 1] === undefined)
+      ) ? 1 : 0
+    }
+
+    const div = (a: number, b: number): number => (b ? a / b : 0)
+
+    const ans = div(t - knots[i], knots[n + i] - knots[i]) * basis(n - 1, i, t) +
+           div(knots[n + i + 1] - t, knots[n + i + 1] - knots[i + 1]) * basis(n - 1, i + 1, t)
+
+    if (log) {
+      console.log(n, i, t, div(t - knots[i], knots[n + i] - knots[i]),
+        div(knots[n + i + 1] - t, knots[n + i + 1] - knots[i + 1]), ans)
+    }
+    return ans
+  }
+
+  return R.range(0, nSample).map((tBase) => {
+    const t = tBase / (nSample - 0.99 /* TODO */) * (knots[m] - knots[degree]) + knots[degree]
+
+    console.log(t, points.map((_, i) => (basis(degree, i, t))))
+
+    log = t === 1
+
+    return new R2Point(
+      points.map((pt, i) => pt.toVector3().multiplyScalar(basis(degree, i, t)))
+        .reduce((a, b) => a.add(b))
+    )
+  })
 }

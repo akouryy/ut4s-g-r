@@ -39,14 +39,16 @@ export class R2Point {
   }
 }
 
-export type R2AlgoKind = 'Bezier' | 'CatmullRom' | 'BSpline' | 'NURBS' | 'Kappa'
+export type R2AlgoKind = 'Bezier' | 'CatmullRom' | 'NURBS' | 'Kappa'
 
 export type R2AlgoCRKnot = 'uniform' | 'chordal' | 'centripetal'
 
 export interface R2AlgoOpts {
   deCasteljau: boolean
+  degree: number
   knot: R2AlgoCRKnot
   loop: boolean
+  openUniform: boolean
 }
 
 export class R2Algo {
@@ -55,7 +57,14 @@ export class R2Algo {
 
   constructor(kind: R2AlgoKind = 'Bezier', opts: Partial<R2AlgoOpts> = {}) {
     this.kind = kind
-    this.opts = { deCasteljau: false, knot: 'uniform', loop: true, ...opts }
+    this.opts = {
+      deCasteljau: false,
+      degree: 3,
+      knot: 'uniform',
+      loop: true,
+      openUniform: true,
+      ...opts
+    }
   }
 
   withKind(kind: R2AlgoKind): R2Algo {
@@ -76,12 +85,11 @@ export class R2Algo {
   }
 }
 
-export const R2AlgoKinds: R2AlgoKind[] = ['Bezier', 'CatmullRom', 'BSpline', 'NURBS', 'Kappa']
+export const R2AlgoKinds: R2AlgoKind[] = ['Bezier', 'CatmullRom', 'NURBS', 'Kappa']
 
 export const R2AlgoNames: { [_ in R2AlgoKind]: string } = {
   Bezier: 'n次有理ベジェ曲線',
   CatmullRom: '3次Catmull-Romスプライン',
-  BSpline: 'Bスプライン',
   NURBS: 'NURBS',
   Kappa: 'κ曲線',
 }
@@ -93,7 +101,7 @@ export function usesY(_algo: R2Algo): boolean {
 }
 
 export function usesWeight(algo: R2Algo): boolean {
-  return algo.kind === 'Bezier' && !algo.opts.deCasteljau
+  return algo.kind === 'Bezier' && !algo.opts.deCasteljau || algo.kind === 'NURBS'
 }
 
 export type R2Messages = {[_ in string]?: string | null}

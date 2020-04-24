@@ -18,6 +18,7 @@ overrides:
 parserOptions:
   project: ./tsconfig.json
 plugins:
+  - no-autofix
   - react-hooks
 root: true
 rules:
@@ -38,6 +39,7 @@ rules:
     #- error
     #- allowForLoopAfterthoughts: true
   no-var: error
+  prefer-const: off # -> no-autofix/prefer-const
   semi-style: [error, first]
   yoda:
     - error
@@ -52,7 +54,12 @@ rules:
 
   jsx-a11y/label-has-associated-control:
     - error
-    - { assert: either }
+    - assert: either
+      controlComponents: ['NumberInput']
+
+  no-autofix/prefer-const:
+    - error
+    - destructuring: all
 
   react/jsx-closing-tag-location: off
   react/jsx-filename-extension: off

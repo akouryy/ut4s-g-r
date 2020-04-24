@@ -25,6 +25,8 @@ export const R2Side: React.FC<NoChild> = () => {
             <li>
               ⌥ Alt + クリック: xz平面上に点を
               <b>追加</b>
+              {' '}
+              (y座標は手入力)
             </li>
             <li>
               ⇧ Shift + クリック: 最も近い点を

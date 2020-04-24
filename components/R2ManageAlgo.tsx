@@ -20,6 +20,10 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
     setAlgo((a) => a.withOptsDiff({ deCasteljau }))
   }, [setAlgo])
 
+  const setDegree = React.useCallback((degree: number) => {
+    setAlgo((a) => a.withOptsDiff({ degree }))
+  }, [setAlgo])
+
   const setKnot = React.useCallback((knot: R2AlgoCRKnot) => {
     setAlgo((a) => a.withOptsDiff({ knot }))
   }, [setAlgo])
@@ -27,6 +31,11 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
   const setLoop = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
     const loop = ev.target.checked
     setAlgo((a) => a.withOptsDiff({ loop }))
+  }, [setAlgo])
+
+  const setOpenUniform = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+    const openUniform = ev.target.checked
+    setAlgo((a) => a.withOptsDiff({ openUniform }))
   }, [setAlgo])
 
   const [cutAt, setCutAt] = React.useState(0.5)
@@ -131,6 +140,24 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
               ループする
             </label>
           </div>
+        </>
+      )}
+      {algo.kind === 'NURBS' && (
+        <>
+          {OptsHeader}
+          <label>
+            次数:
+            <NumberInput min={2} step={1} updateValue={setDegree} value={algo.opts.degree} />
+          </label>
+          <label>
+            <input
+              checked={algo.opts.openUniform}
+              name={`${uuid}-open-uniform`}
+              onChange={setOpenUniform}
+              type='checkbox'
+            />
+            開一様
+          </label>
         </>
       )}
       {algo.kind === 'Kappa' && (
