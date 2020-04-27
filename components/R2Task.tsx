@@ -16,6 +16,7 @@ export const R2Task: React.FC<NoChild> = () => {
         addMessage('components/R2Task', null)
         return ret
       } catch (err) {
+        console.error(err)
         addMessage('components/R2Task', err.message)
         return []
       }

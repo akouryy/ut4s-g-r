@@ -1,9 +1,12 @@
+import * as R from 'ramda'
 import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { NumberInput } from './NumberInput'
 import { NoChild } from '../lib/reactUtil'
 import { R2Context, R2AlgoKinds, R2AlgoNames, R2AlgoKind, R2AlgoCRKnot, R2AlgoCRKnots } from '../lib/r2Base'
 import { calcBezierCut } from '../lib/r2Task'
+import { ValidatingInput } from './ValidatingInput'
+import { Button } from './Button'
 
 export const R2ManageAlgo: React.FC<NoChild> = () => {
   const { addMessage, algo, points, setAlgo, setPoints } = React.useContext(R2Context)
@@ -14,6 +17,30 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
   const setKind = React.useCallback((kind: R2AlgoKind) => {
     setAlgo((a) => a.withKind(kind))
   }, [setAlgo])
+
+  const setBSKnots = React.useCallback((bk: string) => {
+    if (/^-?\d+(.\d+)?(\s*,\s*-?\d+(.\d+)?)+$/.test(bk)) {
+      setAlgo((a) => a.withOptsDiff({ bsKnots: bk.split(',').map((t) => parseFloat(t)) }))
+      return true
+    }
+    return false
+  }, [setAlgo])
+
+  const setBSKnotsUniform = React.useCallback(() => {
+    setAlgo((a) => a.withOptsDiff({
+      bsKnots: R.range(0, points.length + a.opts.degree + 1),
+    }))
+  }, [points, setAlgo])
+
+  const setBSKnotsOpenUniform = React.useCallback(() => setAlgo((a) => {
+    const m = points.length
+    const { degree } = a.opts
+    return a.withOptsDiff({
+      bsKnots: [
+        ...R.repeat(0, degree), ...R.range(0, m - degree + 1), ...R.repeat(m - degree, degree),
+      ],
+    })
+  }), [points, setAlgo])
 
   const setDeCasteljau = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
     const deCasteljau = ev.target.checked
@@ -31,11 +58,6 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
   const setLoop = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
     const loop = ev.target.checked
     setAlgo((a) => a.withOptsDiff({ loop }))
-  }, [setAlgo])
-
-  const setOpenUniform = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
-    const openUniform = ev.target.checked
-    setAlgo((a) => a.withOptsDiff({ openUniform }))
   }, [setAlgo])
 
   const [cutAt, setCutAt] = React.useState(0.5)
@@ -150,14 +172,19 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
             <NumberInput min={2} step={1} updateValue={setDegree} value={algo.opts.degree} />
           </label>
           <label>
-            <input
-              checked={algo.opts.openUniform}
-              name={`${uuid}-open-uniform`}
-              onChange={setOpenUniform}
-              type='checkbox'
+            ノット列:
+            <ValidatingInput
+              className='R2ManageAlgo-BSKnots'
+              updateValue={setBSKnots}
+              value={algo.opts.bsKnots.join(', ')}
             />
-            開一様
           </label>
+          <Button onClick={setBSKnotsUniform}>
+            一様
+          </Button>
+          <Button onClick={setBSKnotsOpenUniform}>
+            開一様
+          </Button>
         </>
       )}
       {algo.kind === 'Kappa' && (

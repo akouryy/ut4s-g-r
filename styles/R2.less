@@ -1,8 +1,14 @@
 .R2 {
+  @mini: ~"(max-width: 959px)";
+
   &Canvas {
     border: 3px outset #977;
     height: calc(90vh - 4rem);
     width: 45vw;
+
+    @media @mini {
+      width: 90vw;
+    }
 
     &-Messages {
       color: #c20;
@@ -32,6 +38,9 @@
   }
 
   &ManageAlgo {
+    &-BSKnots {
+      min-width: 30vw;
+    }
     &-RadioLabel{
       display: inline-block;
     }
@@ -50,6 +59,18 @@
     display: flex;
     justify-content: space-evenly;
     margin-top: 2vh;
+
+    @media @mini {
+      flex-direction: column;
+    }
+
+    &-WarnMini {
+      display: none;
+
+      @media @mini {
+        display: block;
+      }
+    }
   }
 
   &Report {
@@ -67,6 +88,10 @@
 
   &Side {
     width: 45vw;
+
+    @media @mini {
+      width: 90vw;
+    }
 
     & > .react-tabs__tab-list {
       border-bottom: 3px outset #977;

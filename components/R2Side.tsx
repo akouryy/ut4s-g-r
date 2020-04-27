@@ -7,7 +7,7 @@ import { R2Report } from './R2Report'
 
 export const R2Side: React.FC<NoChild> = () => {
   return (
-    <Tabs className='R2Side'>
+    <Tabs className='R2Side' defaultIndex={2}>
       <TabList>
         <Tab>管理</Tab>
         <Tab>操作方法</Tab>

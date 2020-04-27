@@ -55,7 +55,7 @@ rules:
   jsx-a11y/label-has-associated-control:
     - error
     - assert: either
-      controlComponents: ['NumberInput']
+      controlComponents: ['NumberInput', 'ValidatingInput']
 
   no-autofix/prefer-const:
     - error
@@ -63,6 +63,7 @@ rules:
 
   react/jsx-closing-tag-location: off
   react/jsx-filename-extension: off
+  react/jsx-props-no-spreading: off
   react/prop-types: off
   react-hooks/rules-of-hooks: error
   react-hooks/exhaustive-deps: error

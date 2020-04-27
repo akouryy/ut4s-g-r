@@ -15,6 +15,9 @@ export const R2Main: React.FC<NoChild> = () => {
 
   return (
     <R2Context.Provider value={{ messages, points, algo, addMessage, setPoints, setAlgo }}>
+      <div className='R2Main-WarnMini'>
+        推奨環境: 幅960px以上
+      </div>
       <div className='R2Main'>
         <R2Canvas />
         <R2Side />

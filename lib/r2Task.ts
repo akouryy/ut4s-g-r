@@ -10,7 +10,9 @@ export function calcVertices(points: R2Point[], algo: R2Algo): R2Point[] {
   switch (algo.kind) {
     case 'Bezier': return calcBezier(points, { deCasteljau: algo.opts.deCasteljau, nSample })
     case 'CatmullRom': return calcCatmullRom(points, { knot: algo.opts.knot, nSample })
-    case 'NURBS': return calcNURBS(points, { ...algo.opts, nSample })
+    case 'NURBS': return calcNURBS(points, {
+      degree: algo.opts.degree, knots: algo.opts.bsKnots, nSample,
+    })
     case 'Kappa': return calcKappa(points, { iter: 10, loop: algo.opts.loop, nSample })
     default: throw new Error('この曲線は未実装です')
   }
@@ -151,7 +153,7 @@ export function calcCatmullRom(
 
 export function calcNURBS(
   points: R2Point[],
-  { degree, nSample, openUniform }: { degree: number, nSample: number, openUniform: boolean },
+  { degree, knots, nSample }: { degree: number, knots: number[], nSample: number },
 ): R2Point[] {
   if (degree <= 1 || !Number.isInteger(degree)) {
     throw new Error('[NURBS] 次数は2以上の整数を指定してください')
@@ -163,33 +165,32 @@ export function calcNURBS(
     throw new Error('[NURBS] 点を(次数+1)個以上指定してください')
   }
 
-  const knots = openUniform
-    ? [...R.repeat(0, degree), ...R.range(0, m - degree + 1), ...R.repeat(m - degree, degree)]
-    : R.range(0, m + degree + 1)
+  if (knots.length !== m + degree + 1) {
+    throw new Error('ノット列にはちょうど(次数+制御点数+1)個の値を指定してください')
+  }
 
-  let log = false
+  if (R.aperture(2, knots).some(([t1, t2]) => t1 > t2)) {
+    throw new Error('ノット列には広義単調増加列を指定してください')
+  }
 
   function basis(n: number, i: number, t: number): number {
     if (n === 0) {
-      if (log) {
-        console.log(n, i, knots[i] !== undefined &&
-        knots[i] <= t && (t < knots[i + 1] || knots[i + 1] === undefined))
-      }
       return (
-        knots[i] !== undefined &&
-        knots[i] <= t && (t < knots[i + 1] || knots[i + 1] === undefined)
+        knots[i] !== undefined && knots[i + 1] !== undefined &&
+        knots[i] <= t && t < knots[i + 1]
       ) ? 1 : 0
     }
 
-    const div = (a: number, b: number): number => (b ? a / b : 0)
-
-    const ans = div(t - knots[i], knots[n + i] - knots[i]) * basis(n - 1, i, t) +
-           div(knots[n + i + 1] - t, knots[n + i + 1] - knots[i + 1]) * basis(n - 1, i + 1, t)
-
-    if (log) {
-      console.log(n, i, t, div(t - knots[i], knots[n + i] - knots[i]),
-        div(knots[n + i + 1] - t, knots[n + i + 1] - knots[i + 1]), ans)
+    function div(a: number, b: number): number {
+      if (b) { return a / b }
+      if (a) { throw new Error('[NURBS] assertion failed: Infinity') }
+      return 0
     }
+
+    const ans =
+      div(basis(n - 1, i, t) * (t - knots[i]), knots[n + i] - knots[i]) +
+      div(basis(n - 1, i + 1, t) * (knots[n + i + 1] - t), knots[n + i + 1] - knots[i + 1])
+
     return ans
   }
 
@@ -198,11 +199,19 @@ export function calcNURBS(
 
     console.log(t, points.map((_, i) => (basis(degree, i, t))))
 
-    log = t === 1
+    // log = t === 1
+
+    let normalizer = 0
 
     return new R2Point(
-      points.map((pt, i) => pt.toVector3().multiplyScalar(basis(degree, i, t)))
+      points
+        .map((pt, i) => {
+          const coef = basis(degree, i, t) * pt.weight
+          normalizer += coef
+          return pt.toVector3().multiplyScalar(coef)
+        })
         .reduce((a, b) => a.add(b))
+        .divideScalar(normalizer)
     )
   })
 }

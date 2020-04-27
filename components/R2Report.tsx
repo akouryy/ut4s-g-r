@@ -1,3 +1,4 @@
+import * as R from 'ramda'
 import React from 'react'
 import { NoChild } from '../lib/reactUtil'
 import { R2Context, R2Point, R2Algo } from '../lib/r2Base'
@@ -14,9 +15,11 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
   const p2 = new R2Point(10, 0, -10)
   const p2y = new R2Point(10, -20, -10)
   const p2w = new R2Point(10, 0, -10, 5)
+  const p2yw = new R2Point(10, -5, -10, 5)
   const p3 = new R2Point(3, 0, -17)
   const p4 = new R2Point(0, 15, -3)
   const p5 = new R2Point(-10, 0, 5)
+  const p5w = new R2Point(-10, 0, 5, 10)
   const p6 = new R2Point(-0.5, 0, -5)
   const p7 = new R2Point(0.5, 0, -5)
   const p8 = new R2Point(10, 0, 5)
@@ -38,6 +41,13 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
   const exC1 = setter(new R2Algo('CatmullRom'), [p5, p6, p7, p8])
   const exC2 = setter(new R2Algo('CatmullRom', { knot: 'chordal' }), [p5, p6, p7, p8])
   const exC3 = setter(new R2Algo('CatmullRom', { knot: 'centripetal' }), [p5, p6, p7, p8])
+
+  const pn123 = [p0, p1, p2, p5, p3]
+  const kn34 = [0, 0, 1, 3, 4, 7, 7, 9, 9]
+  const exN1 = setter(new R2Algo('NURBS', { bsKnots: R.range(0, 9) }), pn123)
+  const exN2 = setter(new R2Algo('NURBS', { bsKnots: [0, 0, 0, 0, 1, 2, 2, 2, 2] }), pn123)
+  const exN3 = setter(new R2Algo('NURBS', { bsKnots: kn34 }), pn123)
+  const exN4 = setter(new R2Algo('NURBS', { bsKnots: kn34 }), [p0, p1, p2yw, p5w, p3])
 
   const exK1 = setter(new R2Algo('Kappa'), [
     new R2Point(7.28, 0.00, -10.18),
@@ -83,7 +93,7 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
         <small>(3D(カメラ操作によりy座標を確認できる))</small>
         )と de Casteljau のアルゴリズム(
         <LinkButton onClick={exB3}>例B3</LinkButton>
-        )の双方を実装した。de Casteljau のアルゴリズムを使用している際には曲線の分割(
+        )の双方を実装した。de Casteljau のアルゴリズムを使用している際には曲線の分割操作(
         <LinkButton onClick={exB4}>例B4</LinkButton>
         <small>(例B3の曲線の t≦0.7 の切り取り)</small>
         )も可能である。
@@ -110,6 +120,28 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
         )、Centripetal (
         <LinkButton onClick={exC3}>例C3</LinkButton>
         )の3種を実装した。
+      </p>
+
+      <h3>NURBS</h3>
+      <p>
+        3次元空間上に非一様有理 B-スプラインを描画した(
+        <LinkButton onClick={exN1}>例N1</LinkButton>
+        <small>(一様)</small>
+        {', '}
+        <LinkButton onClick={exN2}>例N2</LinkButton>
+        <small>(開一様)</small>
+        {', '}
+        <LinkButton onClick={exN3}>例N3</LinkButton>
+        <small>(非一様)</small>
+        {', '}
+        <LinkButton onClick={exN4}>例N4</LinkButton>
+        <small>(非一様、有理、3D)</small>
+        )。0除算エラーの対処は
+        <ExternalLink href='https://math.stackexchange.com/a/441520'>
+          Alistair Buxton, computational geometry - Potential Division by zero in the
+          construction of NURBS basis functions: how to handle? - Mathematics Stack Exchange
+        </ExternalLink>
+        を参考にした。
       </p>
 
       <h3>κ曲線</h3>

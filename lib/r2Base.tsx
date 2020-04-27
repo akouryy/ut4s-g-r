@@ -44,11 +44,11 @@ export type R2AlgoKind = 'Bezier' | 'CatmullRom' | 'NURBS' | 'Kappa'
 export type R2AlgoCRKnot = 'uniform' | 'chordal' | 'centripetal'
 
 export interface R2AlgoOpts {
+  bsKnots: number[]
   deCasteljau: boolean
   degree: number
   knot: R2AlgoCRKnot
   loop: boolean
-  openUniform: boolean
 }
 
 export class R2Algo {
@@ -58,11 +58,11 @@ export class R2Algo {
   constructor(kind: R2AlgoKind = 'Bezier', opts: Partial<R2AlgoOpts> = {}) {
     this.kind = kind
     this.opts = {
+      bsKnots: [0, 1, 2, 2.5, 4, 5, 6, 7],
       deCasteljau: false,
       degree: 3,
       knot: 'uniform',
       loop: true,
-      openUniform: true,
       ...opts
     }
   }
