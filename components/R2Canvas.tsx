@@ -2,7 +2,7 @@ import React from 'react'
 import { Canvas, PointerEvent } from 'react-three-fiber'
 import { NoChild } from '../lib/reactUtil'
 import { R2Task } from './R2Task'
-import { R2Context, R2Point } from '../lib/r2Base'
+import { R2Context, R2Point } from '../lib/r2/base'
 import { R2CanvasCamera } from './R2CanvasCamera'
 
 export const R2Canvas: React.FC<NoChild> = () => {

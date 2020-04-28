@@ -3,7 +3,7 @@
 import * as R from 'ramda'
 import { Vector3 } from 'three'
 import { calcBezier } from './r2Task'
-import { R2Point } from './r2Base'
+import { R2Point } from './r2/base'
 
 class Controls {
   readonly points: Vector3[]

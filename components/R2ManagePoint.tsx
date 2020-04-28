@@ -1,6 +1,6 @@
 import React from 'react'
 import { NoChild } from '../lib/reactUtil'
-import { R2Point, R2Context, usesWeight, usesY } from '../lib/r2Base'
+import { R2Point, R2Context, usesWeight, usesY } from '../lib/r2/base'
 import { NumberInput } from './NumberInput'
 
 interface P {

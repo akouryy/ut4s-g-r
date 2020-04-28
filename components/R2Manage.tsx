@@ -1,6 +1,6 @@
 import React from 'react'
 import { NoChild } from '../lib/reactUtil'
-import { R2Context, usesWeight, R2Point, usesY } from '../lib/r2Base'
+import { R2Context, usesWeight, R2Point, usesY } from '../lib/r2/base'
 import { R2ManagePoint } from './R2ManagePoint'
 import { R2ManageAlgo } from './R2ManageAlgo'
 

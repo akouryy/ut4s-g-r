@@ -1,7 +1,7 @@
 import * as R from 'ramda'
 import React from 'react'
 import { NoChild } from '../lib/reactUtil'
-import { R2Context, R2Point, R2Algo } from '../lib/r2Base'
+import { R2Context, R2Point, R2Algo } from '../lib/r2/base'
 import { ExternalLink } from './ExternalLink'
 import { LinkButton } from './LinkButton'
 import { calcBezierCut } from '../lib/r2Task'
@@ -67,6 +67,44 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
     new R2Point(8.53, 0.00, -2.75),
   ])
 
+  const exS1 = setter(new R2Algo('BezierSurface'), [
+    new R2Point(-14.24, 10, -11.33),
+    new R2Point(-6.5, 0, -11.72),
+    new R2Point(9.52, 10, -11.72),
+    new R2Point(20.31, 0, -11.41),
+    new R2Point(-19.25, 0, 3.21),
+    new R2Point(-4.31, 10, 0.08),
+    new R2Point(4.91, 50, 0.08),
+    new R2Point(13.67, 10, 1.88),
+    new R2Point(-15.1, 10, 12.67),
+    new R2Point(-6.56, -20, 12.6),
+    new R2Point(7.34, 10, 10.72),
+    new R2Point(18.88, 0, 8.54),
+    new R2Point(-14.87, 0, 21.89),
+    new R2Point(-6.03, 10, 21.85),
+    new R2Point(8.46, 0, 20.67),
+    new R2Point(19.25, 10, 20.51)
+  ])
+
+  const exS2 = setter(new R2Algo('BezierSurface'), [
+    new R2Point(-14.24, 10, -11.33),
+    new R2Point(-6.5, 0, -11.72),
+    new R2Point(9.52, 10, -11.72, 3),
+    new R2Point(20.31, 0, -11.41),
+    new R2Point(-19.25, 0, 3.21),
+    new R2Point(-4.31, 10, 0.08),
+    new R2Point(4.91, 50, 0.08),
+    new R2Point(13.67, 10, 1.88),
+    new R2Point(-15.1, 10, 12.67),
+    new R2Point(-6.56, -20, 12.6, 5),
+    new R2Point(7.34, 10, 10.72),
+    new R2Point(18.88, 0, 8.54),
+    new R2Point(-14.87, 0, 21.89),
+    new R2Point(-6.03, 10, 21.85),
+    new R2Point(8.46, 0, 20.67, 3),
+    new R2Point(19.25, 10, 20.51)
+  ])
+
   return (
     <section className='R2Report'>
       <h1 className='R2Report-Title'>コンピュータグラフィクス論(2020) 課題</h1>
@@ -82,7 +120,9 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
         動作は macOS Catalina 10.15.3（19D76）上で動作する Google Chrome 81.0.4044.113 により確認した。
       </p>
       <p>
-        ソースコードは Github で閲覧可能である。
+        ソースコードは
+        <ExternalLink href='https://github.com/akouryy/ut4s-g-r'>Github</ExternalLink>
+        で閲覧可能である。
       </p>
       <h3>ベジェ曲線</h3>
       <p>
@@ -158,6 +198,16 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
         <small>(3D、非ループ)</small>
         )。なお、現在は当該資料に JavaScript
         による実装が掲載されているが、実装開始時にはなかったため、C# による実装を移植した。
+      </p>
+
+      <h3>有理ベジェ曲面</h3>
+      <p>
+        制御点を平方数(n)個与えたとき、それを √n 個ごとに区切ったものを用いて、有理ベジェ曲面を描画した(
+        <LinkButton onClick={exS1}>例S1</LinkButton>
+        {', '}
+        <LinkButton onClick={exS2}>例S2</LinkButton>
+        <small>(重みつき)</small>
+        )。計算には de Casteljau のアルゴリズムではなく、単純な多項式評価を用いた。
       </p>
     </section>
   )

@@ -1,7 +1,7 @@
 import React from 'react'
 import { R2Canvas } from './R2Canvas'
 import { R2Side } from './R2Side'
-import { R2Context, R2Point, R2Algo } from '../lib/r2Base'
+import { R2Context, R2Point, R2Algo } from '../lib/r2/base'
 import { NoChild } from '../lib/reactUtil'
 
 export const R2Main: React.FC<NoChild> = () => {

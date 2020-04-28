@@ -3,7 +3,7 @@ import '../styles/NumberInput.less'
 import { NoChild } from '../lib/reactUtil'
 
 type P = React.InputHTMLAttributes<HTMLInputElement> & {
-  fractionDigits?: number
+  equivalenceWith: (_: string) => unknown
   onChange?: never
   type?: never
   value: string
@@ -11,7 +11,7 @@ type P = React.InputHTMLAttributes<HTMLInputElement> & {
 }
 
 export const ValidatingInput: React.FC<P & NoChild> = ({
-  className, value, updateValue, ...props
+  className, equivalenceWith, value, updateValue, ...props
 }) => {
   const [rawValue, setRawValue] = React.useState(value)
 
@@ -20,10 +20,10 @@ export const ValidatingInput: React.FC<P & NoChild> = ({
   const [error, setError] = React.useState(false)
 
   React.useEffect(() => {
-    if (value !== lastValidValue) {
+    if (equivalenceWith(value) === equivalenceWith(lastValidValue)) {
       setRawValue(value)
     }
-  }, [lastValidValue, value])
+  }, [equivalenceWith, lastValidValue, value])
 
   const handleChange = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
     ev.preventDefault()

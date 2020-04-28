@@ -1,7 +1,7 @@
 import React from 'react'
 import { Vector3 } from 'three'
 import { v4 as uuidv4 } from 'uuid'
-import { notImplemented } from './errors'
+import { notImplemented } from '../errors'
 
 export class R2Point {
   id: string
@@ -39,7 +39,7 @@ export class R2Point {
   }
 }
 
-export type R2AlgoKind = 'Bezier' | 'CatmullRom' | 'NURBS' | 'Kappa'
+export type R2AlgoKind = 'Bezier' | 'CatmullRom' | 'NURBS' | 'Kappa' | 'BezierSurface'
 
 export type R2AlgoCRKnot = 'uniform' | 'chordal' | 'centripetal'
 
@@ -85,13 +85,14 @@ export class R2Algo {
   }
 }
 
-export const R2AlgoKinds: R2AlgoKind[] = ['Bezier', 'CatmullRom', 'NURBS', 'Kappa']
+export const R2AlgoKinds: R2AlgoKind[] = ['Bezier', 'CatmullRom', 'NURBS', 'Kappa', 'BezierSurface']
 
 export const R2AlgoNames: { [_ in R2AlgoKind]: string } = {
-  Bezier: 'n次有理ベジェ曲線',
+  Bezier: '有理ベジェ曲線',
   CatmullRom: '3次Catmull-Romスプライン',
   NURBS: 'NURBS',
   Kappa: 'κ曲線',
+  BezierSurface: 'ベジェ曲面',
 }
 
 export const R2AlgoCRKnots: R2AlgoCRKnot[] = ['uniform', 'chordal', 'centripetal']
@@ -102,6 +103,10 @@ export function usesY(_algo: R2Algo): boolean {
 
 export function usesWeight(algo: R2Algo): boolean {
   return algo.kind === 'Bezier' && !algo.opts.deCasteljau || algo.kind === 'NURBS'
+}
+
+export function isSurface(algo: R2Algo): boolean {
+  return algo.kind === 'BezierSurface'
 }
 
 export type R2Messages = {[_ in string]?: string | null}

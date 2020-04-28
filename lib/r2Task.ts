@@ -1,5 +1,5 @@
 import * as R from 'ramda'
-import { R2Algo, R2Point, R2AlgoCRKnot } from './r2Base'
+import { R2Algo, R2Point, R2AlgoCRKnot } from './r2/base'
 import { mult, plus } from './fn'
 import { calcKappa } from './r2Kappa'
 import { circularlyAt, lastBang } from './misc'
@@ -14,7 +14,8 @@ export function calcVertices(points: R2Point[], algo: R2Algo): R2Point[] {
       degree: algo.opts.degree, knots: algo.opts.bsKnots, nSample,
     })
     case 'Kappa': return calcKappa(points, { iter: 10, loop: algo.opts.loop, nSample })
-    default: throw new Error('この曲線は未実装です')
+    case 'BezierSurface': return calcBezierSurface(points, { nSample })
+    default: throw new Error('この曲線/曲面は未実装です')
   }
 }
 
@@ -84,7 +85,7 @@ export function calcBezierCut(points: R2Point[], splitAt: number): R2Point[] {
   return temps
 }
 
-export function calcCatmullRom(
+function calcCatmullRom(
   pointsRaw: R2Point[],
   { knot, nSample }: { knot: R2AlgoCRKnot, nSample: number },
 ): R2Point[] {
@@ -151,7 +152,7 @@ export function calcCatmullRom(
   ]
 }
 
-export function calcNURBS(
+function calcNURBS(
   points: R2Point[],
   { degree, knots, nSample }: { degree: number, knots: number[], nSample: number },
 ): R2Point[] {
@@ -197,8 +198,6 @@ export function calcNURBS(
   return R.range(0, nSample).map((tBase) => {
     const t = tBase / (nSample - 0.99 /* TODO */) * (knots[m] - knots[degree]) + knots[degree]
 
-    console.log(t, points.map((_, i) => (basis(degree, i, t))))
-
     // log = t === 1
 
     let normalizer = 0
@@ -213,5 +212,48 @@ export function calcNURBS(
         .reduce((a, b) => a.add(b))
         .divideScalar(normalizer)
     )
+  })
+}
+
+function calcBezierSurface(
+  points: R2Point[],
+  { nSample: nSampleSq }: { nSample: number },
+): R2Point[] {
+  const pl = points.length
+
+  if (pl < 9) {
+    throw new Error('[BezierSurface] 点を9つ以上指定してください')
+  }
+
+  const n = Math.sqrt(pl) - 1
+
+  if (!Number.isInteger(n) || (n + 1) ** 2 !== pl) {
+    throw new Error('[BezierSurface] 点は平方数の個数指定してください')
+  }
+
+  const nSample = Math.ceil(nSampleSq ** 0.5)
+
+  return R.range(0, nSample + 1).flatMap((txBase) => {
+    const tx = txBase / nSample
+
+    return R.range(0, nSample + 1).map((tyBase) => {
+      const ty = tyBase / nSample
+
+      const f = (prop: 'x' | 'y' | 'z'): number => {
+        let normalizer = 0
+
+        return points.map((pt, ii) => {
+          const ix = Math.floor(ii / (n + 1))
+          const iy = ii % (n + 1)
+
+          const coef = binomSimple(n, ix) * tx ** ix * (1 - tx) ** (n - ix) *
+                       binomSimple(n, iy) * ty ** iy * (1 - ty) ** (n - iy) *
+                       pt.weight
+          normalizer += coef
+          return pt[prop] * coef
+        }).reduce(plus) / normalizer
+      }
+      return new R2Point(f('x'), f('y'), f('z'))
+    })
   })
 }

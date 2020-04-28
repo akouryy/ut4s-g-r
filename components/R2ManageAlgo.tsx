@@ -3,7 +3,7 @@ import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { NumberInput } from './NumberInput'
 import { NoChild } from '../lib/reactUtil'
-import { R2Context, R2AlgoKinds, R2AlgoNames, R2AlgoKind, R2AlgoCRKnot, R2AlgoCRKnots } from '../lib/r2Base'
+import { R2Context, R2AlgoKinds, R2AlgoNames, R2AlgoKind, R2AlgoCRKnot, R2AlgoCRKnots } from '../lib/r2/base'
 import { calcBezierCut } from '../lib/r2Task'
 import { ValidatingInput } from './ValidatingInput'
 import { Button } from './Button'
@@ -18,9 +18,11 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
     setAlgo((a) => a.withKind(kind))
   }, [setAlgo])
 
+  const parseBSKnots = (bk: string): number[] => bk.split(',').map(parseFloat)
+
   const setBSKnots = React.useCallback((bk: string) => {
     if (/^-?\d+(.\d+)?(\s*,\s*-?\d+(.\d+)?)+$/.test(bk)) {
-      setAlgo((a) => a.withOptsDiff({ bsKnots: bk.split(',').map((t) => parseFloat(t)) }))
+      setAlgo((a) => a.withOptsDiff({ bsKnots: parseBSKnots(bk) }))
       return true
     }
     return false
@@ -80,7 +82,7 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
   return (
     <div className='R2ManageAlgo'>
       <section>
-        <h3 className='R2Manage-Title'>曲線</h3>
+        <h3 className='R2Manage-Title'>曲線/曲面</h3>
         {R2AlgoKinds.map((kind) => (
           <label className='R2ManageAlgo-RadioLabel' key={kind}>
             <input
@@ -175,6 +177,7 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
             ノット列:
             <ValidatingInput
               className='R2ManageAlgo-BSKnots'
+              equivalenceWith={parseBSKnots}
               updateValue={setBSKnots}
               value={algo.opts.bsKnots.join(', ')}
             />
