@@ -102,7 +102,9 @@ export function usesY(_algo: R2Algo): boolean {
 }
 
 export function usesWeight(algo: R2Algo): boolean {
-  return algo.kind === 'Bezier' && !algo.opts.deCasteljau || algo.kind === 'NURBS'
+  return algo.kind === 'Bezier' && !algo.opts.deCasteljau ||
+         algo.kind === 'NURBS' ||
+         algo.kind === 'BezierSurface'
 }
 
 export function isSurface(algo: R2Algo): boolean {

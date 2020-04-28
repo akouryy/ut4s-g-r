@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { NumberInput } from './NumberInput'
 import { NoChild } from '../lib/reactUtil'
 import { R2Context, R2AlgoKinds, R2AlgoNames, R2AlgoKind, R2AlgoCRKnot, R2AlgoCRKnots } from '../lib/r2/base'
-import { calcBezierCut } from '../lib/r2Task'
+import { calcBezierCut } from '../lib/r2/task'
 import { ValidatingInput } from './ValidatingInput'
 import { Button } from './Button'
 
@@ -18,14 +18,17 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
     setAlgo((a) => a.withKind(kind))
   }, [setAlgo])
 
-  const parseBSKnots = (bk: string): number[] => bk.split(',').map(parseFloat)
-
-  const setBSKnots = React.useCallback((bk: string) => {
+  const stringToBSKnots = React.useCallback((bk: string): number[] | null => {
     if (/^-?\d+(.\d+)?(\s*,\s*-?\d+(.\d+)?)+$/.test(bk)) {
-      setAlgo((a) => a.withOptsDiff({ bsKnots: parseBSKnots(bk) }))
-      return true
+      return bk.split(',').map(parseFloat)
     }
-    return false
+    return null
+  }, [])
+
+  const bsKnotsToString = React.useCallback((bk: number[]): string => bk.join(', '), [])
+
+  const setBSKnots = React.useCallback((bsKnots: number[]) => {
+    setAlgo((a) => a.withOptsDiff({ bsKnots }))
   }, [setAlgo])
 
   const setBSKnotsUniform = React.useCallback(() => {
@@ -152,18 +155,6 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
               {knot}
             </label>
           ))}
-          <div>
-            <label>
-              <input
-                checked
-                name={`${uuid}-loop`}
-                // onChange={setLoop}
-                readOnly
-                type='checkbox'
-              />
-              ループする
-            </label>
-          </div>
         </>
       )}
       {algo.kind === 'NURBS' && (
@@ -177,9 +168,10 @@ export const R2ManageAlgo: React.FC<NoChild> = () => {
             ノット列:
             <ValidatingInput
               className='R2ManageAlgo-BSKnots'
-              equivalenceWith={parseBSKnots}
+              s2v={stringToBSKnots}
               updateValue={setBSKnots}
-              value={algo.opts.bsKnots.join(', ')}
+              v2s={bsKnotsToString}
+              value={algo.opts.bsKnots}
             />
           </label>
           <Button onClick={setBSKnotsUniform}>

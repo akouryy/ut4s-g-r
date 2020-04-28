@@ -1,6 +1,7 @@
 import React from 'react'
 import '../styles/NumberInput.less'
 import { NoChild } from '../lib/reactUtil'
+import { ValidatingInput } from './ValidatingInput'
 
 type P = React.InputHTMLAttributes<HTMLInputElement> & {
   fractionDigits?: number
@@ -15,45 +16,22 @@ function toFixed(value: number, fractionDigits: number | undefined): string {
 }
 
 export const NumberInput: React.FC<P & NoChild> = ({
-  className, fractionDigits, value, updateValue, ...props
+  fractionDigits, ...props
 }) => {
-  const [rawValue, setRawValue] = React.useState(toFixed(value, fractionDigits))
+  const s2v = React.useCallback((s: string) => {
+    const float = parseFloat(s)
+    return Number.isFinite(float) ? float : null
+  }, [])
 
-  const [error, setError] = React.useState(false)
-
-  React.useEffect(() => {
-    if (!error && value !== parseFloat(rawValue)) {
-      setRawValue(toFixed(value, fractionDigits))
-    }
-  }, [error, fractionDigits, rawValue, value])
-
-  const handleChange = React.useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
-    ev.preventDefault()
-    setRawValue(ev.target.value)
-    const float = parseFloat(ev.target.value)
-    if (Number.isFinite(float)) {
-      setError(false)
-      updateValue(float)
-    } else {
-      setError(true)
-    }
-  }, [setRawValue, updateValue])
-
-  const cls = className ?? 'NumberInput'
+  const v2s = React.useCallback((n: number) => toFixed(n, fractionDigits), [fractionDigits])
 
   return (
-    <span className={`${cls}-Container`}>
-      <input
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...props}
-        className={cls}
-        onChange={handleChange}
-        type='number'
-        value={rawValue}
-      />
-      {error && (
-        <span aria-label='invalid' role='img'>❌</span>
-      )}
-    </span>
+    <ValidatingInput
+      className='NumberInput'
+      {...props}
+      s2v={s2v}
+      type='number'
+      v2s={v2s}
+    />
   )
 }

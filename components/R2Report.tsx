@@ -4,7 +4,7 @@ import { NoChild } from '../lib/reactUtil'
 import { R2Context, R2Point, R2Algo } from '../lib/r2/base'
 import { ExternalLink } from './ExternalLink'
 import { LinkButton } from './LinkButton'
-import { calcBezierCut } from '../lib/r2Task'
+import { calcBezierCut } from '../lib/r2/task'
 
 export const R2Report: React.FC<NoChild> = React.memo(() => {
   const { setAlgo, setPoints } = React.useContext(R2Context)
@@ -124,6 +124,21 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
         <ExternalLink href='https://github.com/akouryy/ut4s-g-r'>Github</ExternalLink>
         で閲覧可能である。
       </p>
+      <p>
+        課題スライドに示されたものの中では、以下のものを実装した。
+        <ul>
+          <li>2次ベジェ曲線</li>
+          <li>制御点をマウスで追加</li>
+          <li>一般のn次ベジェ曲線</li>
+          <li>ベジェ曲線の分割</li>
+          <li>有理ベジェ曲線</li>
+          <li>3次Catmull-Romスプライン</li>
+          <li>Catmull-Romスプラインのノット列の与え方(3通り)</li>
+          <li>Bスプライン、NURBS</li>
+          <li>3D空間上のベジェ曲面</li>
+          <li>κ-Curves</li>
+        </ul>
+      </p>
       <h3>ベジェ曲線</h3>
       <p>
         3次元空間上に一般のn次ベジェ曲線を描画した。計算方法は単純な多項式評価(
@@ -153,7 +168,7 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
 
       <h3>Catmull-Rom スプライン</h3>
       <p>
-        3次元空間上に Catmull-Rom スプラインを描画した。ノット列として Uniform (
+        3次元空間上の Catmull-Rom スプラインを実装した。ノット列として Uniform (
         <LinkButton onClick={exC1}>例C1</LinkButton>
         )、Chordal (
         <LinkButton onClick={exC2}>例C2</LinkButton>
@@ -164,7 +179,7 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
 
       <h3>NURBS</h3>
       <p>
-        3次元空間上に非一様有理 B-スプラインを描画した(
+        3次元空間上の非一様有理 B-スプラインを実装した(
         <LinkButton onClick={exN1}>例N1</LinkButton>
         <small>(一様)</small>
         {', '}
@@ -177,6 +192,7 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
         <LinkButton onClick={exN4}>例N4</LinkButton>
         <small>(非一様、有理、3D)</small>
         )。0除算エラーの対処は
+        {' '}
         <ExternalLink href='https://math.stackexchange.com/a/441520'>
           Alistair Buxton, computational geometry - Potential Division by zero in the
           construction of NURBS basis functions: how to handle? - Mathematics Stack Exchange
@@ -197,12 +213,16 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
         <LinkButton onClick={exK2}>例K2</LinkButton>
         <small>(3D、非ループ)</small>
         )。なお、現在は当該資料に JavaScript
-        による実装が掲載されているが、実装開始時にはなかったため、C# による実装を移植した。
+        による実装(
+        <ExternalLink href='https://rijicho-k-curves.glitch.me/'>
+          <span aria-label='兎' role='img'>🐰</span>
+        </ExternalLink>
+        )が掲載されているが、実装開始時にはなかったため、C# による実装を移植した。
       </p>
 
       <h3>有理ベジェ曲面</h3>
       <p>
-        制御点を平方数(n)個与えたとき、それを √n 個ごとに区切ったものを用いて、有理ベジェ曲面を描画した(
+        制御点をn(平方数)個与えたとき、それを √n 個ごとに区切ったものを用いた有理ベジェ曲面の描画を実装した(
         <LinkButton onClick={exS1}>例S1</LinkButton>
         {', '}
         <LinkButton onClick={exS2}>例S2</LinkButton>

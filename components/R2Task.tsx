@@ -1,10 +1,10 @@
 import * as R from 'ramda'
 import React from 'react'
-import { Color, DoubleSide, Face3, Vector3 } from 'three'
+import { DoubleSide, Face3, Vector3 } from 'three'
 import { NoChild } from '../lib/reactUtil'
 import { R2Context, isSurface } from '../lib/r2/base'
 import { forceGeometryUpdate } from '../lib/threeUtil'
-import { calcVertices } from '../lib/r2Task'
+import { calcVertices } from '../lib/r2/task'
 
 export const R2Task: React.FC<NoChild> = () => {
   const { algo, points, addMessage } = React.useContext(R2Context)
@@ -52,9 +52,8 @@ export const R2Task: React.FC<NoChild> = () => {
         <pointsMaterial attach='material' color={0xff3300} size={0.25} />
       </points>
 
-      {isSurface(algo) ? (
+      {surfaceFaces ? (
         <group key={lineVertices.toString() + points.toString()}>
-          <directionalLight color={new Color(0xffffff)} intensity={1} position={[10, 30, 10]} />
           <mesh>
             <geometry
               attach='geometry'
@@ -62,7 +61,13 @@ export const R2Task: React.FC<NoChild> = () => {
               onUpdate={forceGeometryUpdate}
               vertices={lineVertices}
             />
-            <meshBasicMaterial attach='material' color={0x00ff00} side={DoubleSide} wireframe />
+            <meshBasicMaterial
+              attach='material'
+              color={0x00ff00}
+              side={DoubleSide}
+              wireframe
+              wireframeLinewidth={3}
+            />
           </mesh>
           <mesh>
             <geometry

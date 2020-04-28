@@ -2,8 +2,8 @@
 // https://qiita.com/Rijicho_nl/items/05ee4c8d77e99e29daa5
 import * as R from 'ramda'
 import { Vector3 } from 'three'
-import { calcBezier } from './r2Task'
-import { R2Point } from './r2/base'
+import { calcBezier } from './task'
+import { R2Point } from './base'
 
 class Controls {
   readonly points: Vector3[]

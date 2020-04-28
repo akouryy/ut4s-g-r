@@ -1,8 +1,8 @@
 import * as R from 'ramda'
-import { R2Algo, R2Point, R2AlgoCRKnot } from './r2/base'
-import { mult, plus } from './fn'
-import { calcKappa } from './r2Kappa'
-import { circularlyAt, lastBang } from './misc'
+import { R2Algo, R2Point, R2AlgoCRKnot } from './base'
+import { mult, plus } from '../fn'
+import { calcKappa } from './kappa'
+import { circularlyAt, lastBang } from '../misc'
 
 export function calcVertices(points: R2Point[], algo: R2Algo): R2Point[] {
   const nSample = Math.floor(200 * Math.sqrt(points.length))
