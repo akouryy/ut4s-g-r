@@ -122,7 +122,19 @@ export const R2Report: React.FC<NoChild> = React.memo(() => {
       <p>
         ソースコードは
         <ExternalLink href='https://github.com/akouryy/ut4s-g-r'>Github</ExternalLink>
-        で閲覧可能である。
+        で閲覧可能である。この課題に特に関係のあるファイルとして、
+        <ExternalLink href='https://github.com/akouryy/ut4s-g-r/blob/2305f18/lib/r2/task.ts'>
+          task.ts
+        </ExternalLink>
+        、
+        <ExternalLink href='https://github.com/akouryy/ut4s-g-r/blob/2305f18/lib/r2/kappa.ts'>
+          kappa.ts
+        </ExternalLink>
+        、
+        <ExternalLink href='https://github.com/akouryy/ut4s-g-r/blob/2305f18/components/R2Task.tsx'>
+          R2Task.tsx
+        </ExternalLink>
+        が挙げられる。
       </p>
       <p>
         課題スライドに示されたものの中では、以下のものを実装した。
